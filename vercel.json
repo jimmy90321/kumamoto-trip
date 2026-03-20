@@ -2,10 +2,6 @@
   "version": 2,
   "builds": [
     {
-      "src": "thai-trip.html",
-      "use": "@vercel/static"
-    },
-    {
       "src": "api/flights.js",
       "use": "@vercel/node"
     }
@@ -16,11 +12,11 @@
       "dest": "/api/flights.js"
     },
     {
-      "src": "/",
-      "dest": "/thai-trip.html"
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
-  ],
-  "env": {
-    "SERPAPI_KEY": "f1b0a51cdbd646a4e0bea3346b446c1e430744172af05be016f6a402cdbf7e39"
-  }
+  ]
 }
