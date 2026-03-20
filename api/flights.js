@@ -1,8 +1,8 @@
 // Vercel API route for SerpApi
 module.exports = async function handler(req, res) {
-  const { departure_id, arrival_id, departure_date, return_date } = req.query;
+  const { departure_id, arrival_id, outbound_date, return_date } = req.query;
 
-  if (!departure_id || !arrival_id || !departure_date || !return_date) {
+  if (!departure_id || !arrival_id || !outbound_date || !return_date) {
     return res.status(400).json({ error: 'Missing required parameters' });
   }
 
@@ -10,7 +10,7 @@ module.exports = async function handler(req, res) {
   
   try {
     // Step 1: Search flights - this returns a search_id
-    const searchUrl = `https://serpapi.com/search?engine=google_flights&departure_id=${departure_id}&arrival_id=${arrival_id}&gl=tw&hl=zh-TW&currency=TWD&departure_date=${departure_date}&return_date=${return_date}&api_key=${apiKey}`;
+    const searchUrl = `https://serpapi.com/search?engine=google_flights&departure_id=${departure_id}&arrival_id=${arrival_id}&gl=tw&hl=zh-TW&currency=TWD&outbound_date=${outbound_date}&return_date=${return_date}&api_key=${apiKey}`;
     
     const searchResponse = await fetch(searchUrl);
     const searchData = await searchResponse.json();

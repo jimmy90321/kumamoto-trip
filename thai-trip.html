@@ -454,7 +454,7 @@
         const departureDate = formatDate(startDate);
         const returnDate = formatDate(endDate);
         
-        const apiUrl = `/api/flights?departure_id=TPE&arrival_id=BKK&departure_date=${departureDate}&return_date=${returnDate}`;
+        const apiUrl = `/api/flights?departure_id=TPE&arrival_id=BKK&outbound_date=${departureDate}&return_date=${returnDate}`;
         const response = await fetch(apiUrl);
         const data = await response.json();
         
@@ -463,7 +463,8 @@
         // 嘗試從 best_flights 獲取最低價
         if (data.best_flights && data.best_flights.length > 0) {
           for (const flight of data.best_flights) {
-            const price = parseInt(flight.price.replace(/[^0-9]/g, ''));
+            // price 可能是數字或字串
+            const price = typeof flight.price === 'number' ? flight.price : parseInt(flight.price);
             if (!apiPrice || price < apiPrice) {
               apiPrice = price;
             }
@@ -473,7 +474,7 @@
         // 嘗試從 other_flights 獲取更低價
         if (data.other_flights && data.other_flights.length > 0) {
           for (const flight of data.other_flights) {
-            const price = parseInt(flight.price.replace(/[^0-9]/g, ''));
+            const price = typeof flight.price === 'number' ? flight.price : parseInt(flight.price);
             if (!apiPrice || price < apiPrice) {
               apiPrice = price;
             }
