@@ -4,12 +4,23 @@
     {
       "src": "thai-trip.html",
       "use": "@vercel/static"
+    },
+    {
+      "src": "api/flights.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
+      "src": "/api/flights",
+      "dest": "/api/flights.js"
+    },
+    {
       "src": "/",
       "dest": "/thai-trip.html"
     }
-  ]
+  ],
+  "env": {
+    "SERPAPI_KEY": "@serpapi-key"
+  }
 }
