@@ -170,9 +170,11 @@
     <!-- Souvenir Page -->
     <div id="souvenir" class="page">
       <div class="souvenir-input">
-        <input type="text" id="souvenirInput" placeholder="輸入伴手禮名稱...(可從上方推薦點擊加入，已有圖片)" onkeypress="handleKeyPress(event)">
+        <input type="text" id="souvenirInput" placeholder="輸入伴手禮名稱並按Enter...(會自動搜尋圖片)" onkeypress="handleKeyPress(event)">
         <button onclick="addSouvenir()">新增</button>
       </div>
+      <div id="searchStatus" style="display:none; text-align:center; padding:10px; color:#666;">
+        🔍 搜尋圖片中...</div>
       <ul class="souvenir-list" id="souvenirList"></ul>
       
       <div class="recommendations">
@@ -210,6 +212,7 @@
 
     async function addSouvenir(name, image) {
       const input = document.getElementById('souvenirInput');
+      const statusDiv = document.getElementById('searchStatus');
       const itemName = name || input.value.trim();
       if (!itemName) return;
       
@@ -217,6 +220,12 @@
       if (souvenirs.some(s => s.name === itemName)) {
         alert('這個伴手禮已經在清單中了！');
         return;
+      }
+      
+      // 顯示搜尋狀態
+      if (!image && !name) {
+        statusDiv.textContent = '🔍 搜尋圖片中...';
+        statusDiv.style.display = 'block';
       }
       
       // 嘗試匹配圖片
@@ -235,7 +244,16 @@
             const response = await fetch(`/api/search-image?name=${encodeURIComponent(itemName)}`);
             if (response.ok) {
               const data = await response.json();
-              itemImage = data.image;
+              // 確保圖片URL是完整的
+              if (data.image) {
+                if (data.image.startsWith('/cache/')) {
+                  itemImage = 'https://loremflickr.com' + data.image;
+                } else if (data.image.startsWith('http')) {
+                  itemImage = data.image;
+                } else {
+                  itemImage = 'https://loremflickr.com' + data.image;
+                }
+              }
               itemUrl = data.url;
             }
           } catch (e) {
@@ -243,6 +261,9 @@
           }
         }
       }
+      
+      // 隱藏搜尋狀態
+      statusDiv.style.display = 'none';
       
       souvenirs.push({ name: itemName, image: itemImage || null, url: itemUrl || null, bought: false });
       saveSouvenirs();
