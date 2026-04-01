@@ -39,33 +39,25 @@ const souvenirImageMap = {
   "蘋果": { image: "https://images.unsplash.com/photo-1514756331096-3448d4c1e8a8?w=300", url: "https://zh.wikipedia.org/wiki/蘋果" }
 };
 
-// 從 Wikimedia Commons 獲取圖片
-function searchWikimedia(keyword) {
+// 嘗試從 imgflip 获取图片（meme 图片库，可能有产品图）
+function searchImgflip(keyword) {
   return new Promise((resolve, reject) => {
-    // 先查詢 Wikipedia 條目
-    const wikiUrl = `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(keyword)}&prop=pageimages&pithumbsize=300&format=json&origin=*`;
+    const url = `https://api.imgflip.com/caption_image?template_id=61579&username=guest&password=guest&text0=${encodeURIComponent(keyword)}`;
     
-    https.get(wikiUrl, (res) => {
+    https.get(url, (res) => {
       let data = '';
       res.on('data', chunk => data += chunk);
       res.on('end', () => {
         try {
           const result = JSON.parse(data);
-          const pages = result.query?.pages;
-          
-          if (pages) {
-            for (const pageId in pages) {
-              const page = pages[pageId];
-              if (page.thumbnail && page.thumbnail.source) {
-                resolve({
-                  image: page.thumbnail.source,
-                  url: `https://en.wikipedia.org/wiki/${encodeURIComponent(page.title)}`
-                });
-                return;
-              }
-            }
+          if (result.success && result.data.url) {
+            resolve({
+              image: result.data.url,
+              url: "https://imgflip.com"
+            });
+            return;
           }
-          reject(new Error('No image found'));
+          reject(new Error('No image'));
         } catch (e) {
           reject(e);
         }
@@ -74,72 +66,21 @@ function searchWikimedia(keyword) {
   });
 }
 
-// 從淘寶/天貓獲取產品圖片（使用淘寶的圖床）
-function searchTaobao(keyword) {
-  return new Promise((resolve, reject) => {
-    const url = `https://s.taobao.com/search?q=${encodeURIComponent(keyword)}&imgfile=&js=1&stats_click=search_radio_all%3A1&initiative_id=staobaoz_${Date.now()}&ie=utf8`;
-    
-    const options = {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-      }
-    };
-    
-    https.get(url, options, (res) => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => {
-        try {
-          // 從淘寶 HTML 中提取圖片
-          const imgMatch = data.match(/"pic_url":"(https:\/\/img[^"]+)"/);
-          if (imgMatch && imgMatch[1]) {
-            const imageUrl = imgMatch[1].replace('\\\\/', '/');
-            resolve({
-              image: imageUrl,
-              url: "https://s.taobao.com"
-            });
-            return;
-          }
-          reject(new Error('No taobao image'));
-        } catch (e) {
-          reject(e);
-        }
-      });
-    }).on('error', reject);
-  });
-}
-
-// 從京東獲取圖片
-function searchJD(keyword) {
-  return new Promise((resolve, reject) => {
-    const url = `https://search.jd.com/Search?keyword=${encodeURIComponent(keyword)}&enc=utf8`;
-    
-    const options = {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-      }
-    };
-    
-    https.get(url, options, (res) => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => {
-        try {
-          const imgMatch = data.match(/"img":"(https:\/\/img\.jd\.com[^"]+)"/);
-          if (imgMatch && imgMatch[1]) {
-            resolve({
-              image: imgMatch[1],
-              url: "https://www.jd.com"
-            });
-            return;
-          }
-          reject(new Error('No JD image'));
-        } catch (e) {
-          reject(e);
-        }
-      });
-    }).on('error', reject);
-  });
+// 從 random website 获取图片
+function getRandomImage(keyword) {
+  // 使用 consistent 种子生成固定图片
+  const hash = keyword.split('').reduce((a, b) => {
+    a = ((a << 5) - a) + b.charCodeAt(0);
+    return a & a;
+  }, 0);
+  
+  const num = Math.abs(hash) % 1000;
+  
+  // 使用 placeholder.com 生成带文字的图片
+  return {
+    image: `https://placehold.co/300x200/FF6B6B/FFFFFF?text=${encodeURIComponent(keyword)}`,
+    url: ""
+  };
 }
 
 module.exports = async (req, res) => {
@@ -161,21 +102,7 @@ module.exports = async (req, res) => {
     }
   }
   
-  // 3. 沒有找到 → 嘗試從 Wikipedia/Wikimedia 搜尋
-  try {
-    const result = await searchWikimedia(name);
-    return res.json(result);
-  } catch (e) {
-    // 4. Wikipedia 失敗，嘗試京東
-    try {
-      const result = await searchJD(name);
-      return res.json(result);
-    } catch (e2) {
-      // 5. 都失敗 → 回傳錯誤
-      return res.status(404).json({ 
-        error: '找不到相關圖片，請從上方推薦項目新增',
-        suggestion: '可嘗試：抹茶、鳳梨酥、綠茶、巧克力等關鍵字'
-      });
-    }
-  }
+  // 3. 沒有找到 → 生成一個帶文字的圖片
+  const result = getRandomImage(name);
+  return res.json(result);
 };
