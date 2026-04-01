@@ -70,6 +70,8 @@
     .rec-item h4 { font-size: 0.9rem; color: var(--text); margin-bottom: 0.25rem; }
     .rec-item p { font-size: 0.75rem; color: var(--text-light); }
     .rec-item .add-hint { font-size: 0.7rem; color: var(--accent); margin-top: 0.5rem; }
+    .rec-item .add-btn { width: 100%; margin-top: 0.5rem; padding: 0.5rem; background: var(--accent); color: white; border: none; border-radius: 8px; font-size: 0.85rem; cursor: pointer; }
+    .rec-item .add-btn:hover { background: #1a6b1a; }
 
     @media (max-width: 480px) {
       .header h1 { font-size: 1.1rem; }
@@ -243,24 +245,26 @@
 
     // 推薦伴手禮 - 使用熊本縣官方旅遊網站圖片
     const recommendations = [
-      { name: "譽の陣太鼓", desc: "熊本代表銘菓，紅豆麻糬", image: "https://kumamoto.guide/files/92d47b1a-18b6-4486-8a54-b4cdd27a671d_l.jpg" },
-      { name: "芥末蓮根", desc: "酥脆蓮根，熊本經典", image: "https://kumamoto.guide/files/a8a9d645-c8d4-401d-8b4d-78ca652cb964_s.jpg" },
-      { name: "武者返", desc: "熊本城石垣造型餅乾", image: "https://kumamoto.guide/files/68f5f411-43b8-4c3e-afb9-49a7461f4fd4_l.jpg" },
-      { name: "明蝦煎餅", desc: "天草特產海鮮煎餅", image: "https://kumamoto.guide/files/2570e12e-1c90-4e8a-9f8d-08586e468936_l.jpg" },
-      { name: "南阿蘇啤酒", desc: "當地精釀啤酒", image: "https://kumamoto.guide/files/f1c338a1-0e6d-4138-a66f-6b2e37388ef3_l.jpg" },
-      { name: "阿蘇牛奶糖", desc: "使用阿蘇牛乳", image: "https://kumamoto.guide/files/347e9a52-3782-4eaf-af25-381d250908fd_l.jpg" },
-      { name: "來民澀團扇", desc: "400年傳統工藝", image: "https://kumamoto.guide/files/4d2c1df0-1432-4d2b-a1c5-42e83d1a1e57_l.jpg" },
-      { name: "熊本熊商品", desc: "超可愛熊本熊周邊", image: "https://kumamoto.guide/files/92d47b1a-18b6-4486-8a54-b4cdd27a671d_l.jpg" }
+      { name: "譽の陣太鼓", desc: "熊本代表銘菓，紅豆麻糬", image: "https://kumamoto.guide/files/92d47b1a-18b6-4486-8a54-b4cdd27a671d_l.jpg", url: "https://kumamoto.guide/spots/detail/14" },
+      { name: "芥末蓮根", desc: "酥脆蓮根，熊本經典", image: "https://kumamoto.guide/files/a8a9d645-c8d4-401d-8b4d-78ca652cb964_s.jpg", url: "https://kumamoto.guide/brand/foods/foods_04.html" },
+      { name: "武者返", desc: "熊本城石垣造型餅乾", image: "https://kumamoto.guide/files/68f5f411-43b8-4c3e-afb9-49a7461f4fd4_l.jpg", url: "https://kumamoto.guide/spots/detail/9076" },
+      { name: "明蝦煎餅", desc: "天草特產海鮮煎餅", image: "https://kumamoto.guide/files/2570e12e-1c90-4e8a-9f8d-08586e468936_l.jpg", url: "https://kumamoto.guide/spots/detail/9076" },
+      { name: "南阿蘇啤酒", desc: "當地精釀啤酒", image: "https://kumamoto.guide/files/f1c338a1-0e6d-4138-a66f-6b2e37388ef3_l.jpg", url: "https://kumamoto.guide/look/detail/219" },
+      { name: "阿蘇牛奶糖", desc: "使用阿蘇牛乳", image: "https://kumamoto.guide/files/347e9a52-3782-4eaf-af25-381d250908fd_l.jpg", url: "https://kumamoto.guide/spots/detail/19533" },
+      { name: "來民澀團扇", desc: "400年傳統工藝", image: "https://kumamoto.guide/files/4d2c1df0-1432-4d2b-a1c5-42e83d1a1e57_l.jpg", url: "https://kumamoto.guide/spots/detail/17" },
+      { name: "熊本熊商品", desc: "超可愛熊本熊周邊", image: "https://kumamoto.guide/files/92d47b1a-18b6-4486-8a54-b4cdd27a671d_l.jpg", url: "https://kumamoto.guide/kumaatsu/" }
     ];
 
     function renderRecommendations() {
       const grid = document.getElementById('recGrid');
       grid.innerHTML = recommendations.map((item) => `
-        <div class="rec-item" onclick="addSouvenir('${item.name}', '${item.image}')">
-          <img src="${item.image}" alt="${item.name}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect fill=%22%23f5f5f5%22 width=%22100%22 height=%22100%22/><text fill=%22%23999%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22>🎁</text></svg>'">
-          <h4>${item.name}</h4>
-          <p>${item.desc}</p>
-          <div class="add-hint">+ 點擊加入清單</div>
+        <div class="rec-item">
+          <a href="${item.url}" target="_blank" style="display:block; text-decoration:none; color:inherit;">
+            <img src="${item.image}" alt="${item.name}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect fill=%22%23f5f5f5%22 width=%22100%22 height=%22100%22/><text fill=%22%23999%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22>🎁</text></svg>'">
+            <h4>${item.name}</h4>
+            <p>${item.desc}</p>
+          </a>
+          <button class="add-btn" onclick="addSouvenir('${item.name}', '${item.image}')">+ 加入清單</button>
         </div>
       `).join('');
     }
