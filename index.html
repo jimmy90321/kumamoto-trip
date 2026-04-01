@@ -258,11 +258,7 @@
       // 隱藏搜尋狀態
       statusDiv.style.display = 'none';
       
-      if (!itemImage) {
-        alert('找不到相關圖片，請從上方推薦項目新增！');
-        return;
-      }
-      
+      // 無論有沒有圖片都加入清單
       souvenirs.push({ name: itemName, image: itemImage || null, url: itemUrl || null, bought: false });
       saveSouvenirs();
       input.value = '';
