@@ -1,34 +1,16 @@
 const https = require('https');
 
-// 嘗試從Unsplash獲取圖片
-function searchUnsplash(query) {
+// 嘗試從 Lorem Picsum 獲取隨機圖片
+function searchImage(keyword) {
   return new Promise((resolve, reject) => {
-    const imageUrl = `https://source.unsplash.com/300x300/?${encodeURIComponent(query)}`;
+    // 使用 picsum.photos 關鍵字搜尋
+    const url = `https://loremflickr.com/300/300/${encodeURIComponent(keyword)}?random=${Date.now()}`;
     
-    https.get(imageUrl, (res) => {
+    https.get(url, (res) => {
       if (res.statusCode === 200) {
         resolve({
-          image: imageUrl,
-          url: "https://unsplash.com"
-        });
-      } else {
-        reject(new Error('No image'));
-      }
-    }).on('error', reject);
-  });
-}
-
-// 嘗試從圖片儲存庫獲取
-function searchImageStorage(keyword) {
-  return new Promise((resolve, reject) => {
-    // 使用 picsum.photos 作為備用
-    const imageUrl = `https://picsum.photos/seed/${encodeURIComponent(keyword)}/300/300`;
-    
-    https.get(imageUrl, (res) => {
-      if (res.statusCode === 200) {
-        resolve({
-          image: imageUrl,
-          url: "https://picsum.photos"
+          image: url,
+          url: "https://loremflickr.com"
         });
       } else {
         reject(new Error('No image'));
@@ -44,21 +26,15 @@ module.exports = async (req, res) => {
     return res.status(400).json({ error: '名稱不能為空' });
   }
   
-  // 先嘗試 Unsplash
+  // 嘗試從 loremflickr 搜尋
   try {
-    const result = await searchUnsplash(name);
+    const result = await searchImage(name);
     return res.json(result);
   } catch (e) {
-    // Unsplash 失敗，嘗試 picsum
-    try {
-      const result = await searchImageStorage(name);
-      return res.json(result);
-    } catch (e2) {
-      // 都失敗
-      return res.json({
-        image: `https://via.placeholder.com/300x200?text=${encodeURIComponent(name)}`,
-        url: ""
-      });
-    }
+    // 失敗使用 placeholder
+    return res.json({
+      image: `https://via.placeholder.com/300x200/e0e0e0/666666?text=${encodeURIComponent(name)}`,
+      url: ""
+    });
   }
 };
