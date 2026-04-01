@@ -34,37 +34,43 @@ const souvenirImageMap = {
 
 function fetchWiki(keyword) {
   return new Promise((resolve, reject) => {
-    const urls = [
-      `https://zh.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(keyword)}`,
-      `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(keyword)}`
-    ];
+    const zhUrl = `https://zh.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(keyword)}`;
+    const enUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(keyword)}`;
     
-    let tried = 0;
-    const tryUrl = (i) => {
-      if (i >= urls.length) {
-        reject(new Error('No wiki image'));
-        return;
-      }
-      
-      https.get(urls[i], (res) => {
+    const checkUrl = (url, callback) => {
+      https.get(url, (res) => {
         let data = '';
         res.on('data', chunk => data += chunk);
         res.on('end', () => {
           try {
             const json = JSON.parse(data);
-            if (json.thumbnail) {
-              resolve({ image: json.thumbnail.source, url: json.content_urls?.desktop?.page || '' });
+            if (json.thumbnail && json.thumbnail.source) {
+              callback({ image: json.thumbnail.source, url: json.content_urls?.desktop?.page || '' });
             } else {
-              tryUrl(i + 1);
+              callback(null);
             }
           } catch (e) {
-            tryUrl(i + 1);
+            callback(null);
           }
         });
-      }).on('error', () => tryUrl(i + 1));
+      }).on('error', () => callback(null));
     };
     
-    tryUrl(0);
+    // 先嘗試中文
+    checkUrl(zhUrl, (zhResult) => {
+      if (zhResult) {
+        resolve(zhResult);
+      } else {
+        // 中文沒有，嘗試英文
+        checkUrl(enUrl, (enResult) => {
+          if (enResult) {
+            resolve(enResult);
+          } else {
+            reject(new Error('No wiki image'));
+          }
+        });
+      }
+    });
   });
 }
 
@@ -75,23 +81,30 @@ module.exports = async (req, res) => {
     return res.status(400).json({ error: '名稱不能為空' });
   }
   
+  console.log('Searching for:', name);
+  
   // 1. 精確匹配
   if (souvenirImageMap[name]) {
+    console.log('Found in exact match');
     return res.json(souvenirImageMap[name]);
   }
   
   // 2. 模糊匹配
   for (const [key, value] of Object.entries(souvenirImageMap)) {
     if (name.includes(key) || key.includes(name)) {
+      console.log('Found in fuzzy match:', key);
       return res.json(value);
     }
   }
   
   // 3. 維基百科搜尋
   try {
+    console.log('Trying Wikipedia for:', name);
     const result = await fetchWiki(name);
+    console.log('Wikipedia found:', result.image ? 'YES' : 'NO');
     return res.json(result);
   } catch (e) {
+    console.log('Wikipedia failed:', e.message);
     return res.json({ image: null, url: "", message: '請在客戶端搜尋維基百科' });
   }
 };
