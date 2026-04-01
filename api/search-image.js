@@ -1,6 +1,6 @@
 const https = require('https');
 
-// 伴手禮關鍵字映射 - 只回傳真的相關的圖片
+// 伴手禮關鍵字映射
 const souvenirImageMap = {
   // 熊本
   "陣太鼓": { image: "https://kumamoto.guide/files/92d47b1a-18b6-4486-8a54-b4cdd27a671d_l.jpg", url: "https://kumamoto.guide/spots/detail/14" },
@@ -70,6 +70,41 @@ const souvenirImageMap = {
   "橘子": { image: "https://images.unsplash.com/photo-1514756331096-3448d4c1e8a8?w=300", url: "https://zh.wikipedia.org/wiki/橘子" }
 };
 
+// 從 Google 圖片搜尋結果獲取圖片網址
+function searchGoogleImage(keyword) {
+  return new Promise((resolve, reject) => {
+    // 使用 DuckDuckGo API 搜尋圖片
+    const url = `https://duckduckgo.com/?q=${encodeURIComponent(keyword)}&ia=images&iax=1`;
+    
+    const options = {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      }
+    };
+    
+    https.get(url, options, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        try {
+          // 從 HTML 中提取圖片 URL
+          const imgMatch = data.match(/"image":"(https:\/\/[^"]+)"/);
+          if (imgMatch && imgMatch[1]) {
+            resolve({
+              image: imgMatch[1],
+              url: "https://duckduckgo.com"
+            });
+          } else {
+            reject(new Error('No image found'));
+          }
+        } catch (e) {
+          reject(e);
+        }
+      });
+    }).on('error', reject);
+  });
+}
+
 module.exports = async (req, res) => {
   const { name } = req.query;
   
@@ -89,9 +124,15 @@ module.exports = async (req, res) => {
     }
   }
   
-  // 3. 沒有找到 → 回傳錯誤（不隨便給圖片）
-  return res.status(404).json({ 
-    error: '找不到相關圖片，請從上方推薦項目新增',
-    suggestion: '可嘗試：抹茶、鳳梨酥、綠茶、巧克力、餅乾等關鍵字'
-  });
+  // 3. 沒有找到 → 用 Google 搜尋真正的圖片
+  try {
+    const result = await searchGoogleImage(name);
+    return res.json(result);
+  } catch (e) {
+    // 4. 真的找不到 → 回傳錯誤
+    return res.status(404).json({ 
+      error: '找不到相關圖片',
+      suggestion: '請嘗試其他關鍵字'
+    });
+  }
 };
