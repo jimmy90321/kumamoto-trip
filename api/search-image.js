@@ -1,15 +1,23 @@
 const https = require('https');
 
-// 嘗試從 Lorem Picsum 獲取隨機圖片
+// 從 loremflickr 獲取圖片
 function searchImage(keyword) {
   return new Promise((resolve, reject) => {
-    // 使用 picsum.photos 關鍵字搜尋
-    const url = `https://loremflickr.com/300/300/${encodeURIComponent(keyword)}?random=${Date.now()}`;
+    // loremflickr 會自動導航到隨機圖片
+    const url = `https://loremflickr.com/300/300/all?lock=${Math.floor(Math.random() * 1000)}`;
     
-    https.get(url, (res) => {
-      if (res.statusCode === 200) {
+    const options = {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+      }
+    };
+    
+    https.get(url, options, (res) => {
+      if (res.statusCode === 302 || res.statusCode === 200) {
+        // 獲取實際的圖片 URL
+        const imageUrl = res.headers.location || url;
         resolve({
-          image: url,
+          image: imageUrl,
           url: "https://loremflickr.com"
         });
       } else {
