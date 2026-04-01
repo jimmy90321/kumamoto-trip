@@ -39,36 +39,33 @@ const souvenirImageMap = {
   "蘋果": { image: "https://images.unsplash.com/photo-1514756331096-3448d4c1e8a8?w=300", url: "https://zh.wikipedia.org/wiki/蘋果" }
 };
 
-// 使用 Pexels 免費圖片 API
-function searchPexels(keyword) {
+// 從 Wikimedia Commons 獲取圖片
+function searchWikimedia(keyword) {
   return new Promise((resolve, reject) => {
-    // Pexels API (免費額度每月 200 張)
-    const url = `https://api.pexels.com/v1/search?query=${encodeURIComponent(keyword)}&per_page=1&page=1`;
+    // 先查詢 Wikipedia 條目
+    const wikiUrl = `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(keyword)}&prop=pageimages&pithumbsize=300&format=json&origin=*`;
     
-    const options = {
-      headers: {
-        'Authorization': 'YOUR_PEXELS_API_KEY'  // 需要申請 API key
-      }
-    };
-    
-    // 由於沒有 API key，改用 Pexels 的圖庫搜尋
-    // 使用圖片分類頁面
-    const altUrl = `https://www.pexels.com/search/${encodeURIComponent(keyword)}/`;
-    
-    https.get(altUrl, (res) => {
+    https.get(wikiUrl, (res) => {
       let data = '';
       res.on('data', chunk => data += chunk);
       res.on('end', () => {
         try {
-          const imgMatch = data.match(/src="(https:\/\/images\.pexels\.com\/[^"]+)"/);
-          if (imgMatch && imgMatch[1]) {
-            resolve({
-              image: imgMatch[1] + '?auto=compress&cs=tinysrgb&w=300',
-              url: "https://www.pexels.com"
-            });
-          } else {
-            reject(new Error('No image found'));
+          const result = JSON.parse(data);
+          const pages = result.query?.pages;
+          
+          if (pages) {
+            for (const pageId in pages) {
+              const page = pages[pageId];
+              if (page.thumbnail && page.thumbnail.source) {
+                resolve({
+                  image: page.thumbnail.source,
+                  url: `https://en.wikipedia.org/wiki/${encodeURIComponent(page.title)}`
+                });
+                return;
+              }
+            }
           }
+          reject(new Error('No image found'));
         } catch (e) {
           reject(e);
         }
@@ -77,28 +74,66 @@ function searchPexels(keyword) {
   });
 }
 
-// 使用 Pixabay 免費圖片 API  
-function searchPixabay(keyword) {
+// 從淘寶/天貓獲取產品圖片（使用淘寶的圖床）
+function searchTaobao(keyword) {
   return new Promise((resolve, reject) => {
-    const url = `https://pixabay.com/api/?key=YOUR_KEY&q=${encodeURIComponent(keyword)}&image_type=photo&per_page=3`;
+    const url = `https://s.taobao.com/search?q=${encodeURIComponent(keyword)}&imgfile=&js=1&stats_click=search_radio_all%3A1&initiative_id=staobaoz_${Date.now()}&ie=utf8`;
     
-    // 改用網頁搜尋
-    const altUrl = `https://pixabay.com/images/search/${encodeURIComponent(keyword)}/`;
+    const options = {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+      }
+    };
     
-    https.get(altUrl, (res) => {
+    https.get(url, options, (res) => {
       let data = '';
       res.on('data', chunk => data += chunk);
       res.on('end', () => {
         try {
-          const imgMatch = data.match(/src="(https:\/\/cdn\.pixabay\.com\/[^"]+)"/);
+          // 從淘寶 HTML 中提取圖片
+          const imgMatch = data.match(/"pic_url":"(https:\/\/img[^"]+)"/);
+          if (imgMatch && imgMatch[1]) {
+            const imageUrl = imgMatch[1].replace('\\\\/', '/');
+            resolve({
+              image: imageUrl,
+              url: "https://s.taobao.com"
+            });
+            return;
+          }
+          reject(new Error('No taobao image'));
+        } catch (e) {
+          reject(e);
+        }
+      });
+    }).on('error', reject);
+  });
+}
+
+// 從京東獲取圖片
+function searchJD(keyword) {
+  return new Promise((resolve, reject) => {
+    const url = `https://search.jd.com/Search?keyword=${encodeURIComponent(keyword)}&enc=utf8`;
+    
+    const options = {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+      }
+    };
+    
+    https.get(url, options, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        try {
+          const imgMatch = data.match(/"img":"(https:\/\/img\.jd\.com[^"]+)"/);
           if (imgMatch && imgMatch[1]) {
             resolve({
-              image: imgMatch[1] + '?w=300',
-              url: "https://pixabay.com"
+              image: imgMatch[1],
+              url: "https://www.jd.com"
             });
-          } else {
-            reject(new Error('No image found'));
+            return;
           }
+          reject(new Error('No JD image'));
         } catch (e) {
           reject(e);
         }
@@ -126,16 +161,17 @@ module.exports = async (req, res) => {
     }
   }
   
-  // 3. 沒有找到 → 嘗試用圖片庫搜尋
+  // 3. 沒有找到 → 嘗試從 Wikipedia/Wikimedia 搜尋
   try {
-    const result = await searchPexels(name);
+    const result = await searchWikimedia(name);
     return res.json(result);
-  } catch (e1) {
+  } catch (e) {
+    // 4. Wikipedia 失敗，嘗試京東
     try {
-      const result = await searchPixabay(name);
+      const result = await searchJD(name);
       return res.json(result);
     } catch (e2) {
-      // 4. 真的找不到 → 回傳錯誤
+      // 5. 都失敗 → 回傳錯誤
       return res.status(404).json({ 
         error: '找不到相關圖片，請從上方推薦項目新增',
         suggestion: '可嘗試：抹茶、鳳梨酥、綠茶、巧克力等關鍵字'
