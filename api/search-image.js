@@ -32,43 +32,39 @@ const souvenirImageMap = {
   "蘋果": { image: "https://images.unsplash.com/photo-1514756331096-3448d4c1e8a8?w=300", url: "https://zh.wikipedia.org/wiki/蘋果" }
 };
 
-// 從維基百科 REST API 獲取圖片
-function searchWikipedia(keyword) {
+function fetchWiki(keyword) {
   return new Promise((resolve, reject) => {
-    // 先嘗試中文
     const urls = [
       `https://zh.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(keyword)}`,
       `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(keyword)}`
     ];
     
-    const tryUrls = async (index) => {
-      if (index >= urls.length) {
-        reject(new Error('No image found'));
+    let tried = 0;
+    const tryUrl = (i) => {
+      if (i >= urls.length) {
+        reject(new Error('No wiki image'));
         return;
       }
       
-      https.get(urls[index], (res) => {
+      https.get(urls[i], (res) => {
         let data = '';
         res.on('data', chunk => data += chunk);
         res.on('end', () => {
           try {
-            const result = JSON.parse(data);
-            if (result.thumbnail && result.thumbnail.source) {
-              resolve({
-                image: result.thumbnail.source,
-                url: result.content_urls?.desktop?.page || ''
-              });
+            const json = JSON.parse(data);
+            if (json.thumbnail) {
+              resolve({ image: json.thumbnail.source, url: json.content_urls?.desktop?.page || '' });
             } else {
-              tryUrls(index + 1);
+              tryUrl(i + 1);
             }
           } catch (e) {
-            tryUrls(index + 1);
+            tryUrl(i + 1);
           }
         });
-      }).on('error', () => tryUrls(index + 1));
+      }).on('error', () => tryUrl(i + 1));
     };
     
-    tryUrls(0);
+    tryUrl(0);
   });
 }
 
@@ -91,15 +87,11 @@ module.exports = async (req, res) => {
     }
   }
   
-  // 3. 沒有找到 → 從維基百科搜尋
+  // 3. 維基百科搜尋
   try {
-    const result = await searchWikipedia(name);
+    const result = await fetchWiki(name);
     return res.json(result);
   } catch (e) {
-    return res.json({ 
-      image: null,
-      url: "",
-      message: '請在客戶端搜尋維基百科'
-    });
+    return res.json({ image: null, url: "", message: '請在客戶端搜尋維基百科' });
   }
 };
