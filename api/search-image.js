@@ -38,7 +38,21 @@ function fetchWiki(keyword) {
     const enUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(keyword)}`;
     
     const checkUrl = (url, callback) => {
-      https.get(url, (res) => {
+      const req = https.get(url, (res) => {
+        // 跟隨重導向
+        if (res.statusCode === 302 || res.statusCode === 301) {
+          const location = res.headers.location;
+          if (location) {
+            checkUrl(location, callback);
+            return;
+          }
+        }
+        
+        if (res.statusCode !== 200) {
+          callback(null);
+          return;
+        }
+        
         let data = '';
         res.on('data', chunk => data += chunk);
         res.on('end', () => {
@@ -53,7 +67,10 @@ function fetchWiki(keyword) {
             callback(null);
           }
         });
-      }).on('error', () => callback(null));
+      });
+      
+      req.on('error', () => callback(null));
+      req.setTimeout(5000, () => { req.destroy(); callback(null); });
     };
     
     // 先嘗試中文
@@ -81,30 +98,23 @@ module.exports = async (req, res) => {
     return res.status(400).json({ error: '名稱不能為空' });
   }
   
-  console.log('Searching for:', name);
-  
   // 1. 精確匹配
   if (souvenirImageMap[name]) {
-    console.log('Found in exact match');
     return res.json(souvenirImageMap[name]);
   }
   
   // 2. 模糊匹配
   for (const [key, value] of Object.entries(souvenirImageMap)) {
     if (name.includes(key) || key.includes(name)) {
-      console.log('Found in fuzzy match:', key);
       return res.json(value);
     }
   }
   
   // 3. 維基百科搜尋
   try {
-    console.log('Trying Wikipedia for:', name);
     const result = await fetchWiki(name);
-    console.log('Wikipedia found:', result.image ? 'YES' : 'NO');
     return res.json(result);
   } catch (e) {
-    console.log('Wikipedia failed:', e.message);
     return res.json({ image: null, url: "", message: '請在客戶端搜尋維基百科' });
   }
 };
