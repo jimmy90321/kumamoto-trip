@@ -244,17 +244,10 @@
             const response = await fetch(`/api/search-image?name=${encodeURIComponent(itemName)}`);
             if (response.ok) {
               const data = await response.json();
-              // 確保圖片URL是完整的
               if (data.image) {
-                if (data.image.startsWith('/cache/')) {
-                  itemImage = 'https://loremflickr.com' + data.image;
-                } else if (data.image.startsWith('http')) {
-                  itemImage = data.image;
-                } else {
-                  itemImage = 'https://loremflickr.com' + data.image;
-                }
+                itemImage = data.image;
+                itemUrl = data.url;
               }
-              itemUrl = data.url;
             }
           } catch (e) {
             console.log('搜尋圖片失敗', e);
@@ -264,6 +257,11 @@
       
       // 隱藏搜尋狀態
       statusDiv.style.display = 'none';
+      
+      if (!itemImage) {
+        alert('找不到相關圖片，請從上方推薦項目新增！');
+        return;
+      }
       
       souvenirs.push({ name: itemName, image: itemImage || null, url: itemUrl || null, bought: false });
       saveSouvenirs();
