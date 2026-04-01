@@ -3,7 +3,7 @@ const https = require('https');
 // 伴手禮關鍵字映射
 const souvenirImageMap = {
   // 熊本
-  "陣太鼓": { image: "https://kumamoto.guide/files/92d47b1a-18b6-4486-8a54-b4cdd27a671d_l.jpg", url: "https://kumamoto.guide/spots/detail/14" },
+  "陣太后": { image: "https://kumamoto.guide/files/92d47b1a-18b6-4486-8a54-b4cdd27a671d_l.jpg", url: "https://kumamoto.guide/spots/detail/14" },
   "芥末蓮根": { image: "https://kumamoto.guide/files/a8a9d645-c8d4-401d-8b4d-78ca652cb964_s.jpg", url: "https://kumamoto.guide/brand/foods/foods_04.html" },
   "武者返": { image: "https://47okashi.com/wp-content/uploads/2022/11/【無料有料】ウェブ商品写真-3.png", url: "https://47okashi.com/info/mushagaeshi/" },
   "明蝦煎餅": { image: "http://www.takaraconfect.co.jp/images/products/kurumaebi001.jpg", url: "http://www.takaraconfect.co.jp/commodity_007.html" },
@@ -39,48 +39,38 @@ const souvenirImageMap = {
   "蘋果": { image: "https://images.unsplash.com/photo-1514756331096-3448d4c1e8a8?w=300", url: "https://zh.wikipedia.org/wiki/蘋果" }
 };
 
-// 嘗試從 imgflip 获取图片（meme 图片库，可能有产品图）
-function searchImgflip(keyword) {
+// 從維基百科獲取圖片
+function searchWikipedia(keyword) {
   return new Promise((resolve, reject) => {
-    const url = `https://api.imgflip.com/caption_image?template_id=61579&username=guest&password=guest&text0=${encodeURIComponent(keyword)}`;
+    const wikiUrl = `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(keyword)}&prop=pageimages&pithumbsize=300&format=json&origin=*`;
     
-    https.get(url, (res) => {
+    https.get(wikiUrl, (res) => {
       let data = '';
       res.on('data', chunk => data += chunk);
       res.on('end', () => {
         try {
           const result = JSON.parse(data);
-          if (result.success && result.data.url) {
-            resolve({
-              image: result.data.url,
-              url: "https://imgflip.com"
-            });
-            return;
+          const pages = result.query?.pages;
+          
+          if (pages) {
+            for (const pageId in pages) {
+              const page = pages[pageId];
+              if (page.thumbnail && page.thumbnail.source) {
+                resolve({
+                  image: page.thumbnail.source,
+                  url: `https://en.wikipedia.org/wiki/${encodeURIComponent(page.title)}`
+                });
+                return;
+              }
+            }
           }
-          reject(new Error('No image'));
+          reject(new Error('No image found'));
         } catch (e) {
           reject(e);
         }
       });
     }).on('error', reject);
   });
-}
-
-// 從 random website 获取图片
-function getRandomImage(keyword) {
-  // 使用 consistent 种子生成固定图片
-  const hash = keyword.split('').reduce((a, b) => {
-    a = ((a << 5) - a) + b.charCodeAt(0);
-    return a & a;
-  }, 0);
-  
-  const num = Math.abs(hash) % 1000;
-  
-  // 使用 placeholder.com 生成带文字的图片
-  return {
-    image: `https://placehold.co/300x200/FF6B6B/FFFFFF?text=${encodeURIComponent(keyword)}`,
-    url: ""
-  };
 }
 
 module.exports = async (req, res) => {
@@ -102,7 +92,16 @@ module.exports = async (req, res) => {
     }
   }
   
-  // 3. 沒有找到 → 生成一個帶文字的圖片
-  const result = getRandomImage(name);
-  return res.json(result);
+  // 3. 沒有找到 → 嘗試從維基百科搜尋
+  try {
+    const result = await searchWikipedia(name);
+    return res.json(result);
+  } catch (e) {
+    // 4. 維基百科也沒有 → 回傳空，讓客戶端去嘗試
+    return res.json({ 
+      image: null,
+      url: "",
+      message: '請在客戶端搜尋維基百科'
+    });
+  }
 };

@@ -239,18 +239,57 @@
           itemImage = matchedRec.image;
           itemUrl = matchedRec.url;
         } else {
-          // 從 API 搜尋
+          // 方法1: 從 API 搜尋服務器端
           try {
             const response = await fetch(`/api/search-image?name=${encodeURIComponent(itemName)}`);
             if (response.ok) {
               const data = await response.json();
-              if (data.image) {
+              if (data.image && !data.image.includes('placehold.co')) {
                 itemImage = data.image;
                 itemUrl = data.url;
               }
             }
           } catch (e) {
-            console.log('搜尋圖片失敗', e);
+            console.log('API搜尋失敗', e);
+          }
+          
+          // 方法2: 從維基百科客戶端搜尋
+          if (!itemImage) {
+            try {
+              // 嘗試中文維基百科
+              let wikiUrl = `https://zh.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(itemName)}`;
+              let wikiResponse = await fetch(wikiUrl);
+              let wikiData = null;
+              
+              if (wikiResponse.ok) {
+                wikiData = await wikiResponse.json();
+              } else {
+                // 中文沒有，嘗試英文
+                wikiUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(itemName)}`;
+                wikiResponse = await fetch(wikiUrl);
+                if (wikiResponse.ok) {
+                  wikiData = await wikiResponse.json();
+                }
+              }
+              
+              if (wikiData && wikiData.thumbnail && wikiData.thumbnail.source) {
+                itemImage = wikiData.thumbnail.source;
+                itemUrl = wikiData.content_urls?.desktop?.page || '';
+              }
+            } catch (e2) {
+              console.log('維基百科搜尋失敗', e2);
+            }
+          }
+          
+          // 方法3: 從 Bing 圖片搜尋頁面獲取
+          if (!itemImage) {
+            try {
+              const bingUrl = `https://www.bing.com/images/search?q=${encodeURIComponent(itemName)}&first=1&count=1`;
+              const response = await fetch(proxyUrl + '?url=' + encodeURIComponent(bingUrl));
+              // 由於瀏�器有 CORS 限制，這個方法可能不行
+            } catch (e3) {
+              console.log('Bing搜尋失敗', e3);
+            }
           }
         }
       }
