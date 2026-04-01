@@ -241,16 +241,16 @@
       localStorage.setItem('kumamoto-souvenirs', JSON.stringify(souvenirs));
     }
 
-    // 推薦伴手禮 - 使用真實相關的圖片
+    // 推薦伴手禮 - 使用熊本縣官方旅遊網站圖片
     const recommendations = [
-      { name: "譽の陣太鼓", desc: "熊本代表銘菓，紅豆麻糬", image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=200&h=200&fit=crop" },
-      { name: "芥末蓮根", desc: "酥脆蓮根，熊本經典", image: "https://images.unsplash.com/photo-1582738411706-bfc8e691d48c?w=200&h=200&fit=crop" },
-      { name: "武者返", desc: "熊本城石垣造型餅乾", image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=200&h=200&fit=crop" },
-      { name: "熊本熊商品", desc: "超可愛熊本熊周邊", image: "https://images.unsplash.com/photo-1588412038924-5a1c4d2c5c1c?w=200&h=200&fit=crop" },
-      { name: "明蝦煎餅", desc: "天草特產海鮮煎餅", image: "https://images.unsplash.com/photo-1565693394-9b3f3c1e0d4c?w=200&h=200&fit=crop" },
-      { name: "阿蘇牛奶糖", desc: "使用阿蘇牛乳", image: "https://images.unsplash.com/photo-1581798258726-78c61c724b91?w=200&h=200&fit=crop" },
-      { name: "南阿蘇啤酒", desc: "當地精釀啤酒", image: "https://images.unsplash.com/photo-1569923303237-f1c3b03e0d90?w=200&h=200&fit=crop" },
-      { name: "來民澀團扇", desc: "400年傳統工藝", image: "https://images.unsplash.com/photo-1594631252845-29fc4cc8cde9?w=200&h=200&fit=crop" }
+      { name: "譽の陣太鼓", desc: "熊本代表銘菓，紅豆麻糬", image: "https://kumamoto.guide/files/92d47b1a-18b6-4486-8a54-b4cdd27a671d_l.jpg" },
+      { name: "芥末蓮根", desc: "酥脆蓮根，熊本經典", image: "https://kumamoto.guide/files/ce02187d-d047-4a33-a85b-54174aa9d8ab_l.jpg" },
+      { name: "武者返", desc: "熊本城石垣造型餅乾", image: "https://kumamoto.guide/files/f138b64b-011d-420c-9b8e-985e9295a42d_l.jpg" },
+      { name: "熊本熊商品", desc: "超可愛熊本熊周邊", image: "https://kumamoto.guide/files/a0d74bde-3eb9-4b5f-9d2d-009ac9fa8e83_l.jpg" },
+      { name: "明蝦煎餅", desc: "天草特產海鮮煎餅", image: "https://kumamoto.guide/files/f576e48e-1d0e-42e0-87dd-4f517a761796_l.jpg" },
+      { name: "南阿蘇啤酒", desc: "當地精釀啤酒", image: "https://kumamoto.guide/files/4d2c1df0-1432-4d2b-a1c5-42e83d1a1e57_l.jpg" },
+      { name: "來民澀團扇", desc: "400年傳統工藝", image: "https://kumamoto.guide/files/1e6f3b1a-2b3b-4f9e-843e-dc45d3f453bd_l.jpg" },
+      { name: "阿蘇牛奶糖", desc: "使用阿蘇牛乳", image: "https://kumamoto.guide/files/347e9a52-3782-4eaf-af25-381d250908fd_l.jpg" }
     ];
 
     function renderRecommendations() {
