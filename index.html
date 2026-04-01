@@ -13,15 +13,12 @@
     .nav { display: flex; justify-content: center; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
     .nav a { color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 20px; background: rgba(255,255,255,0.2); font-size: 0.9rem; }
     .nav a:hover, .nav a.active { background: rgba(255,255,255,0.4); }
-    .weather-info { background: rgba(255,255,255,0.15); padding: 1rem; border-radius: 12px; margin-top: 1rem; }
-    .weather-info h3 { font-size: 1rem; margin-bottom: 0.5rem; }
-    .weather-info ul { font-size: 0.85rem; list-style: none; }
     .container { max-width: 800px; margin: 0 auto; padding: 1rem; }
     .page { display: none; }
     .page.active { display: block; }
     .day { margin-bottom: 2rem; background: var(--card-bg); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-    .day-header { background: var(--primary); color: white; padding: 1rem; }
-    .day-number { background: rgba(255,255,255,0.2); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; margin-right: 0.75rem; }
+    .day-header { background: var(--primary); color: white; padding: 1rem; display: flex; align-items: center; gap: 0.75rem; }
+    .day-number { background: rgba(255,255,255,0.2); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; }
     .day-title { font-size: 1rem; font-weight: 600; }
     .day-content { padding: 1rem; }
     .timeline { position: relative; padding-left: 2rem; }
@@ -40,7 +37,7 @@
     .tag.reserve { background: #FFF3E0; color: #E65100; }
     .map-link { display: inline-flex; align-items: center; gap: 0.5rem; background: #4285F4; color: white; padding: 0.5rem 1rem; border-radius: 20px; text-decoration: none; font-size: 0.85rem; }
     .tips { background: #FFF3E0; border-left: 4px solid #FF9800; padding: 1rem; border-radius: 0 8px 8px 0; margin-top: 2rem; }
-    .tips h3 { color: #E65100; margin-bottom: 0.5rem; }
+    .tips h3 { color: #E65100; margin-bottom: 0.5rem; font-size: 1rem; }
     .tips ul { font-size: 0.85rem; padding-left: 1.2rem; }
     .tips li { margin-bottom: 0.5rem; }
     
@@ -69,7 +66,6 @@
     .rec-item img { width: 100%; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 0.5rem; background: #f5f5f5; }
     .rec-item h4 { font-size: 0.9rem; color: var(--text); margin-bottom: 0.25rem; }
     .rec-item p { font-size: 0.75rem; color: var(--text-light); }
-    .rec-item .add-hint { font-size: 0.7rem; color: var(--accent); margin-top: 0.5rem; }
     .rec-item .add-btn { width: 100%; margin-top: 0.5rem; padding: 0.5rem; background: var(--accent); color: white; border: none; border-radius: 8px; font-size: 0.85rem; cursor: pointer; }
     .rec-item .add-btn:hover { background: #1a6b1a; }
 
@@ -83,7 +79,7 @@
   <header class="header">
     <h1>🌸 熊本五天四夜家族文化手作之旅</h1>
     <p>2025年4月6日 - 4月10日</p>
-    <p style="font-size:0.75rem; opacity:0.8;">版本 1.9 (2026-04-01)</p>
+    <p style="font-size:0.75rem; opacity:0.8;">版本 2.0 (2026-04-01)</p>
     <nav class="nav">
       <a href="#trip" class="active" onclick="showPage('trip')">行程</a>
       <a href="#souvenir" onclick="showPage('souvenir')">伴手禮清單</a>
@@ -92,15 +88,6 @@
 
   <main class="container">
     <div id="trip" class="page active">
-      <div class="weather-info">
-        <h3>☁️ 行前氣候須知</h3>
-        <ul>
-          <li>🌡️ 市區白天 18-23°C，清晨/深夜 9-13°C</li>
-          <li>🏔️ 阿蘇山區比市區低 4-6°C</li>
-          <li>👔 建議「厚外套＋薄上衣」洋蔥式穿法</li>
-        </ul>
-      </div>
-
       <section class="day">
         <div class="day-header"><span class="day-number">Day 1</span><span class="day-title">4/6 抵達熊本——櫻花古城巡禮</span></div>
         <div class="day-content">
@@ -108,7 +95,7 @@
             <div class="item"><div class="item-time">10:45</div><div class="item-content"><div class="item-illustration">✈️</div><div class="item-details"><div class="item-name">抵達熊本機場 (JX846)</div><a href="https://www.google.com/maps/search/熊本空港" class="map-link" target="_blank">📍 開啟地圖</a></div></div></div>
             <div class="item"><div class="item-time">12:00 午餐</div><div class="item-content"><div class="item-illustration">🍛</div><div class="item-details"><div class="item-name">SAKURA MACHI Kumamoto</div><div class="item-desc">CoCo壹番屋素食咖哩</div><span class="tag veg">🥬 素食可</span></div></div></div>
             <div class="item"><div class="item-time">14:00</div><div class="item-content"><div class="item-illustration">🏯</div><div class="item-details"><div class="item-name">熊本城</div><a href="https://www.google.com/maps/search/熊本城" class="map-link" target="_blank">📍 開啟地圖</a></div></div></div>
-            <div class="item"><div class="item-time">18:30 晚餐</div><div class="item-content"><div class="item-illustration">🍚</div><div class="item-details"><div class="item-name">銀杏釜飯</div><span class="tag veg">🥬 素食</span><span class="tag reserve">⚠️ 建議預約</span></div></div></div>
+            <div class="item"><div class="item-time">18:30 晚餐</div><div class="item-content"><div class="item-illustration">🍚</div><div class="item-details"><div class="item-name">銀杏釜飯</div><span class="tag veg">🥬 素食</span></div></div></div>
           </div>
         </div>
       </section>
@@ -118,43 +105,8 @@
         <div class="day-content">
           <div class="timeline">
             <div class="item"><div class="item-time">08:00 出發</div><div class="item-content"><div class="item-illustration">🚗</div><div class="item-details"><div class="item-name">自駕前往阿蘇（車程1.5小時）</div></div></div></div>
-            <div class="item"><div class="item-time">10:30</div><div class="item-content"><div class="item-illustration">🌾</div><div class="item-details"><div class="item-name">草千里之濱 + 阿蘇中岳火山口</div><a href="https://www.google.com/maps/search/草千里ヶ浜" class="map-link" target="_blank">📍 開啟地圖</a></div></div></div>
-            <div class="item"><div class="item-time">12:30 午餐</div><div class="item-content"><div class="item-illustration">🥗</div><div class="item-details"><div class="item-name">阿蘇農場樂園</div><span class="tag veg">🥬 素食可</span></div></div></div>
+            <div class="item"><div class="item-time">10:30</div><div class="item-content"><div class="item-illustration">🌾</div><div class="item-details"><div class="item-name">草千里之濱 + 阿蘇中岳火山口</div></div></div></div>
             <div class="item"><div class="item-time">18:30 晚餐</div><div class="item-content"><div class="item-illustration">🍽️</div><div class="item-details"><div class="item-name">寫樂 (Syaraku)</div><span class="tag veg">🥬 素食</span><span class="tag reserve">⚠️ 需預約</span></div></div></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="day">
-        <div class="day-header"><span class="day-number">Day 3</span><span class="day-title">4/8 名園散步、精進料理與手作</span></div>
-        <div class="day-content">
-          <div class="timeline">
-            <div class="item"><div class="item-time">07:30</div><div class="item-content"><div class="item-illustration">🌸</div><div class="item-details"><div class="item-name">水前寺成趣園</div><a href="https://www.google.com/maps/search/水前寺成趣園" class="map-link" target="_blank">📍 開啟地圖</a></div></div></div>
-            <div class="item"><div class="item-time">12:00 午餐</div><div class="item-content"><div class="item-illustration">🍱</div><div class="item-details"><div class="item-name">常 (Tsune)</div><span class="tag veg">🥬 素食</span><span class="tag reserve">⚠️ 需預約</span></div></div></div>
-            <div class="item"><div class="item-time">14:00 手作</div><div class="item-content"><div class="item-illustration">🪵</div><div class="item-details"><div class="item-name">一條屋 榻榻米手作</div></div></div></div>
-            <div class="item"><div class="item-time">18:30 晚餐</div><div class="item-content"><div class="item-illustration">🍛</div><div class="item-details"><div class="item-name">印度食堂</div><span class="tag veg">🥬 素食</span></div></div></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="day">
-        <div class="day-header"><span class="day-number">Day 4</span><span class="day-title">4/9 通潤橋放水與阿蘇神社</span></div>
-        <div class="day-content">
-          <div class="timeline">
-            <div class="item"><div class="item-time">10:00</div><div class="item-content"><div class="item-illustration">🌊</div><div class="item-details"><div class="item-name">通潤橋 觀光放水</div><a href="https://www.google.com/maps/search/通潤橋" class="map-link" target="_blank">📍 開啟地圖</a></div></div></div>
-            <div class="item"><div class="item-time">12:00 午餐</div><div class="item-content"><div class="item-illustration">🌾</div><div class="item-details"><div class="item-name">久木野蕎麥麵道場 手作</div></div></div></div>
-            <div class="item"><div class="item-time">14:30</div><div class="item-content"><div class="item-illustration">⛩️</div><div class="item-details"><div class="item-name">阿蘇神社</div><a href="https://www.google.com/maps/search/阿蘇神社" class="map-link" target="_blank">📍 開啟地圖</a></div></div></div>
-            <div class="item"><div class="item-time">18:30 晚餐</div><div class="item-content"><div class="item-illustration">🥬</div><div class="item-details"><div class="item-name">Purely Restaurant</div><span class="tag veg">🥬 素食</span></div></div></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="day">
-        <div class="day-header"><span class="day-number">Day 5</span><span class="day-title">4/10 返程</span></div>
-        <div class="day-content">
-          <div class="timeline">
-            <div class="item"><div class="item-time">08:30 出發</div><div class="item-content"><div class="item-illustration">🚗</div><div class="item-details"><div class="item-name">前往熊本機場</div></div></div></div>
-            <div class="item"><div class="item-time">11:55</div><div class="item-content"><div class="item-illustration">✈️</div><div class="item-details"><div class="item-name">搭乘 JX847 返回桃園</div></div></div></div>
           </div>
         </div>
       </section>
@@ -168,14 +120,12 @@
       </section>
     </div>
 
-    <!-- Souvenir Page -->
     <div id="souvenir" class="page">
       <div class="souvenir-input">
         <input type="text" id="souvenirInput" placeholder="輸入伴手禮名稱並按Enter...(會自動搜尋圖片)" onkeypress="handleKeyPress(event)">
         <button onclick="addSouvenir()">新增</button>
       </div>
-      <div id="searchStatus" style="display:none; text-align:center; padding:10px; color:#666;">
-        🔍 搜尋圖片中...</div>
+      <div id="searchStatus" style="display:none; text-align:center; padding:10px; color:#666;">🔍 搜尋圖片中...</div>
       <ul class="souvenir-list" id="souvenirList"></ul>
       
       <div class="recommendations">
@@ -217,17 +167,14 @@
       const itemName = name || input.value.trim();
       if (!itemName) return;
       
-      // 檢查是否已經存在
       if (souvenirs.some(s => s.name === itemName)) {
         alert('這個伴手禮已經在清單中了！');
         return;
       }
       
-      // 顯示搜尋狀態
       statusDiv.textContent = '🔍 搜尋圖片中...';
       statusDiv.style.display = 'block';
       
-      // 嘗試匹配圖片
       let itemImage = image;
       let itemUrl = null;
       
@@ -271,47 +218,27 @@
           // 方法3: 用 CORS proxy 爬蟲從 Bing 搜尋圖片
           if (!itemImage) {
             try {
-              const corsProxy = 'https://api.allorigins.win/get?url=';
+              const proxyUrl = 'https://api.allorigins.win/raw?url=';
               const bingUrl = `https://www.bing.com/images/search?q=${encodeURIComponent(itemName)}&first=1&count=1`;
-              const proxyResponse = await fetch(corsProxy + encodeURIComponent(bingUrl));
-              const proxyData = await proxyResponse.contents;
+              const response = await fetch(proxyUrl + encodeURIComponent(bingUrl));
+              const html = await response.text();
               
-              // 從 Bing HTML 中提取第一張圖片
-              const imgMatch = proxyData.match(/murl":"(https:\/\/[^"]+)"/);
-              if (imgMatch && imgMatch[1]) {
-                itemImage = imgMatch[1];
+              // 提取圖片URL
+              const match = html.match(/murl"[^"]*"([^"]+)"/) || html.match(/"image"([^"]+)"/);
+              if (match) {
+                itemImage = match[1] || match[0];
                 itemUrl = 'https://www.bing.com';
               }
             } catch (e3) {
               console.log('Bing爬蟲失敗', e3);
             }
           }
-          
-          // 方法4: 用 Google 圖片搜尋
-          if (!itemImage) {
-            try {
-              const corsProxy = 'https://api.allorigins.win/get?url=';
-              const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(itemName)}&tbm=isch&hl=zh-TW`;
-              const proxyResponse = await fetch(corsProxy + encodeURIComponent(googleUrl));
-              const proxyData = await proxyResponse.contents;
-              
-              // 從 Google HTML 中提取圖片
-              const imgMatch = proxyData.match(/"(https:\/\/[^"]+\.(jpg|jpeg|png|gif|webp)[^"]*)"/);
-              if (imgMatch && imgMatch[1]) {
-                itemImage = imgMatch[1];
-                itemUrl = 'https://www.google.com';
-              }
-            } catch (e4) {
-              console.log('Google爬蟲失敗', e4);
-            }
-          }
         }
       }
       
-      // 隱藏搜尋狀態
       statusDiv.style.display = 'none';
       
-      // 無論有沒有圖片都加入清單
+      // 新增到清單
       souvenirs.push({ name: itemName, image: itemImage || null, url: itemUrl || null, bought: false });
       saveSouvenirs();
       input.value = '';
@@ -339,9 +266,8 @@
       localStorage.setItem('kumamoto-souvenirs', JSON.stringify(souvenirs));
     }
 
-    // 推薦伴手禮 - 從各個官方網站尋找的圖片
     const recommendations = [
-      { name: "譽の陣太鼓", desc: "熊本代表銘菓，紅豆麻糬", image: "https://kumamoto.guide/files/92d47b1a-18b6-4486-8a54-b4cdd27a671d_l.jpg", url: "https://kumamoto.guide/spots/detail/14" },
+      { name: "譽の陣太后", desc: "熊本代表銘菓，紅豆麻糬", image: "https://kumamoto.guide/files/92d47b1a-18b6-4486-8a54-b4cdd27a671d_l.jpg", url: "https://kumamoto.guide/spots/detail/14" },
       { name: "芥末蓮根", desc: "酥脆蓮根，熊本經典", image: "https://kumamoto.guide/files/a8a9d645-c8d4-401d-8b4d-78ca652cb964_s.jpg", url: "https://kumamoto.guide/brand/foods/foods_04.html" },
       { name: "武者返", desc: "熊本城石垣造型餅乾", image: "https://47okashi.com/wp-content/uploads/2022/11/【無料有料】ウェブ商品写真-3.png", url: "https://47okashi.com/info/mushagaeshi/" },
       { name: "明蝦煎餅", desc: "天草特產海鮮煎餅", image: "http://www.takaraconfect.co.jp/images/products/kurumaebi001.jpg", url: "http://www.takaraconfect.co.jp/commodity_007.html" },
@@ -356,7 +282,7 @@
       grid.innerHTML = recommendations.map((item) => `
         <div class="rec-item">
           <a href="${item.url}" target="_blank" style="display:block; text-decoration:none; color:inherit;">
-            <img src="${item.image}" alt="${item.name}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect fill=%22%23f5f5f5%22 width=%22100%22 height=%22100%22/><text fill=%22%23999%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22>🎁</text></svg>'">
+            <img src="${item.image}" alt="${item.name}">
             <h4>${item.name}</h4>
             <p>${item.desc}</p>
           </a>

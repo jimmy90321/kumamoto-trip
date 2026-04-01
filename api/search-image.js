@@ -2,7 +2,6 @@ const https = require('https');
 
 // 伴手禮關鍵字映射
 const souvenirImageMap = {
-  // 熊本
   "陣太后": { image: "https://kumamoto.guide/files/92d47b1a-18b6-4486-8a54-b4cdd27a671d_l.jpg", url: "https://kumamoto.guide/spots/detail/14" },
   "芥末蓮根": { image: "https://kumamoto.guide/files/a8a9d645-c8d4-401d-8b4d-78ca652cb964_s.jpg", url: "https://kumamoto.guide/brand/foods/foods_04.html" },
   "武者返": { image: "https://47okashi.com/wp-content/uploads/2022/11/【無料有料】ウェブ商品写真-3.png", url: "https://47okashi.com/info/mushagaeshi/" },
@@ -17,8 +16,6 @@ const souvenirImageMap = {
   "太平燕": { image: "https://kumamoto.guide/files/c9e4cc06-ca9e-4596-b7aa-911e88977c4a_s.jpg", url: "https://kumamoto.guide/brand/foods/foods_03.html" },
   "阿蘇牛": { image: "https://kumamoto.guide/files/cb5d8f5a-6ae1-41be-84d8-cdb3b5710422_s.jpg", url: "https://kumamoto.guide/brand/foods/foods_02.html" },
   "拉麵": { image: "https://kumamoto.guide/files/6908e4fc-aea1-4033-98e1-0907f05c9db7_s.jpg", url: "https://kumamoto.guide/brand/foods/foods_01.html" },
-  
-  // 日本著名伴手禮
   "抹茶": { image: "https://images.unsplash.com/photo-1515823064-d6e0c04616a7?w=300", url: "https://zh.wikipedia.org/wiki/抹茶" },
   "綠茶": { image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300", url: "https://zh.wikipedia.org/wiki/靜岡茶" },
   "東京芭娜娜": { image: "https://images.unsplash.com/photo-1481391319760-47d736725a87?w=300", url: "https://ja.wikipedia.org/wiki/東京ばなな" },
@@ -26,50 +23,52 @@ const souvenirImageMap = {
   "royce": { image: "https://images.unsplash.com/photo-1511381939415-e440db668de3?w=300", url: "https://ja.wikipedia.org/wiki/ロイズ" },
   "大福": { image: "https://images.unsplash.com/photo-1576085898323-218337e3e43c?w=300", url: "https://zh.wikipedia.org/wiki/大福" },
   "羊羹": { image: "https://images.unsplash.com/photo-1582738411706-bfc8e691d48c?w=300", url: "https://zh.wikipedia.org/wiki/羊羹" },
-  
-  // 台灣
   "鳳梨酥": { image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=300", url: "https://zh.wikipedia.org/wiki/鳳梨酥" },
   "太陽餅": { image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=300", url: "https://zh.wikipedia.org/wiki/太陽餅" },
   "牛軋糖": { image: "https://images.unsplash.com/photo-1581798258726-78c61c724b91?w=300", url: "https://zh.wikipedia.org/wiki/牛軋糖" },
-  
-  // 甜點
   "巧克力": { image: "https://images.unsplash.com/photo-1511381939415-e440db668de3?w=300", url: "https://zh.wikipedia.org/wiki/巧克力" },
   "餅乾": { image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=300", url: "https://zh.wikipedia.org/wiki/餅乾" },
   "草莓": { image: "https://images.unsplash.com/photo-1514756331096-3448d4c1e8a8?w=300", url: "https://zh.wikipedia.org/wiki/草莓" },
   "蘋果": { image: "https://images.unsplash.com/photo-1514756331096-3448d4c1e8a8?w=300", url: "https://zh.wikipedia.org/wiki/蘋果" }
 };
 
-// 從維基百科獲取圖片
+// 從維基百科 REST API 獲取圖片
 function searchWikipedia(keyword) {
   return new Promise((resolve, reject) => {
-    const wikiUrl = `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(keyword)}&prop=pageimages&pithumbsize=300&format=json&origin=*`;
+    // 先嘗試中文
+    const urls = [
+      `https://zh.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(keyword)}`,
+      `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(keyword)}`
+    ];
     
-    https.get(wikiUrl, (res) => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => {
-        try {
-          const result = JSON.parse(data);
-          const pages = result.query?.pages;
-          
-          if (pages) {
-            for (const pageId in pages) {
-              const page = pages[pageId];
-              if (page.thumbnail && page.thumbnail.source) {
-                resolve({
-                  image: page.thumbnail.source,
-                  url: `https://en.wikipedia.org/wiki/${encodeURIComponent(page.title)}`
-                });
-                return;
-              }
+    const tryUrls = async (index) => {
+      if (index >= urls.length) {
+        reject(new Error('No image found'));
+        return;
+      }
+      
+      https.get(urls[index], (res) => {
+        let data = '';
+        res.on('data', chunk => data += chunk);
+        res.on('end', () => {
+          try {
+            const result = JSON.parse(data);
+            if (result.thumbnail && result.thumbnail.source) {
+              resolve({
+                image: result.thumbnail.source,
+                url: result.content_urls?.desktop?.page || ''
+              });
+            } else {
+              tryUrls(index + 1);
             }
+          } catch (e) {
+            tryUrls(index + 1);
           }
-          reject(new Error('No image found'));
-        } catch (e) {
-          reject(e);
-        }
-      });
-    }).on('error', reject);
+        });
+      }).on('error', () => tryUrls(index + 1));
+    };
+    
+    tryUrls(0);
   });
 }
 
@@ -92,12 +91,11 @@ module.exports = async (req, res) => {
     }
   }
   
-  // 3. 沒有找到 → 嘗試從維基百科搜尋
+  // 3. 沒有找到 → 從維基百科搜尋
   try {
     const result = await searchWikipedia(name);
     return res.json(result);
   } catch (e) {
-    // 4. 維基百科也沒有 → 回傳空，讓客戶端去嘗試
     return res.json({ 
       image: null,
       url: "",
