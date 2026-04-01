@@ -2,17 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/flights.js",
-      "use": "@vercel/node"
+      "src": "index.html",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
     {
-      "src": "/api/flights",
-      "dest": "/api/flights.js"
-    },
-    {
-      "handle": "filesystem"
+      "src": "/",
+      "dest": "/index.html"
     },
     {
       "src": "/(.*)",

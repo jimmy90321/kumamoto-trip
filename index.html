@@ -1,1 +1,272 @@
-<!doctype html><html lang="zh-TW"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="theme-color" content="#11998e"/><meta name="description" content="泰國出團意願日期調查"/><title>泰國出團意願日期調查</title><script defer="defer" src="/static/js/main.2f069dba.js"></script><link href="/static/css/main.d9892e5f.css" rel="stylesheet"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"></div></body></html>
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>熊本五天四夜家族文化手作之旅</title>
+  <style>
+    :root { --primary: #8B4513; --secondary: #D2691E; --accent: #228B22; --bg: #FFF8F0; --card-bg: #FFFFFF; --text: #333; --text-light: #666; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+    .header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 1.5rem 1rem; text-align: center; position: sticky; top: 0; z-index: 100; }
+    .header h1 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+    .nav { display: flex; justify-content: center; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
+    .nav a { color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 20px; background: rgba(255,255,255,0.2); font-size: 0.9rem; }
+    .nav a:hover, .nav a.active { background: rgba(255,255,255,0.4); }
+    .weather-info { background: rgba(255,255,255,0.15); padding: 1rem; border-radius: 12px; margin-top: 1rem; }
+    .weather-info h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+    .weather-info ul { font-size: 0.85rem; list-style: none; }
+    .container { max-width: 800px; margin: 0 auto; padding: 1rem; }
+    .page { display: none; }
+    .page.active { display: block; }
+    .day { margin-bottom: 2rem; background: var(--card-bg); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .day-header { background: var(--primary); color: white; padding: 1rem; }
+    .day-number { background: rgba(255,255,255,0.2); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; margin-right: 0.75rem; }
+    .day-title { font-size: 1rem; font-weight: 600; }
+    .day-content { padding: 1rem; }
+    .timeline { position: relative; padding-left: 2rem; }
+    .timeline::before { content: ''; position: absolute; left: 0.5rem; top: 0; bottom: 0; width: 2px; background: var(--secondary); opacity: 0.3; }
+    .item { position: relative; margin-bottom: 1.5rem; padding-left: 1.5rem; }
+    .item::before { content: ''; position: absolute; left: -1.25rem; top: 0.3rem; width: 12px; height: 12px; background: var(--accent); border-radius: 50%; border: 2px solid white; }
+    .item-time { font-weight: 600; color: var(--primary); font-size: 0.9rem; margin-bottom: 0.25rem; }
+    .item-content { display: flex; gap: 1rem; align-items: flex-start; }
+    .item-illustration { width: 60px; height: 60px; min-width: 60px; background: linear-gradient(135deg, #f0f0f0, #e0e0e0); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; }
+    .item-details { flex: 1; }
+    .item-name { font-weight: 600; margin-bottom: 0.25rem; }
+    .item-desc { font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.5rem; }
+    .item-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem; }
+    .tag { font-size: 0.75rem; padding: 0.2rem 0.5rem; border-radius: 4px; background: #f0f0f0; color: #666; }
+    .tag.veg { background: #E8F5E9; color: #2E7D32; }
+    .tag.reserve { background: #FFF3E0; color: #E65100; }
+    .map-link { display: inline-flex; align-items: center; gap: 0.5rem; background: #4285F4; color: white; padding: 0.5rem 1rem; border-radius: 20px; text-decoration: none; font-size: 0.85rem; }
+    .tips { background: #FFF3E0; border-left: 4px solid #FF9800; padding: 1rem; border-radius: 0 8px 8px 0; margin-top: 2rem; }
+    .tips h3 { color: #E65100; margin-bottom: 0.5rem; }
+    .tips ul { font-size: 0.85rem; padding-left: 1.2rem; }
+    .tips li { margin-bottom: 0.5rem; }
+    
+    /* Souvenir Styles */
+    .souvenir-input { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
+    .souvenir-input input { flex: 1; padding: 0.75rem; border: 2px solid var(--secondary); border-radius: 12px; font-size: 1rem; }
+    .souvenir-input button { background: var(--secondary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 12px; font-size: 1rem; cursor: pointer; }
+    .souvenir-list { list-style: none; }
+    .souvenir-item { display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--card-bg); border-radius: 12px; margin-bottom: 0.75rem; cursor: pointer; transition: all 0.2s; }
+    .souvenir-item:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .souvenir-item.bought { background: #E8F5E9; opacity: 0.7; }
+    .souvenir-item.bought .souvenir-name { text-decoration: line-through; color: var(--text-light); }
+    .souvenir-checkbox { width: 24px; height: 24px; border: 2px solid var(--secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .souvenir-item.bought .souvenir-checkbox { background: var(--accent); border-color: var(--accent); }
+    .souvenir-item.bought .souvenir-checkbox::after { content: '✓'; color: white; font-size: 14px; }
+    .souvenir-img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; background: #f0f0f0; }
+    .souvenir-name { flex: 1; font-size: 1rem; }
+    .souvenir-delete { background: none; border: none; color: #999; cursor: pointer; font-size: 1.2rem; padding: 0.5rem; }
+    .souvenir-empty { text-align: center; padding: 2rem; color: var(--text-light); }
+    
+    .recommendations { margin-top: 2rem; padding-top: 2rem; border-top: 2px dashed #ddd; }
+    .recommendations h3 { color: var(--primary); margin-bottom: 1rem; font-size: 1.2rem; }
+    .rec-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; }
+    .rec-item { background: var(--card-bg); padding: 0.75rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); cursor: pointer; transition: all 0.2s; text-align: center; }
+    .rec-item:hover { transform: translateY(-4px); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+    .rec-item img { width: 100%; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 0.5rem; background: #f5f5f5; }
+    .rec-item h4 { font-size: 0.9rem; color: var(--text); margin-bottom: 0.25rem; }
+    .rec-item p { font-size: 0.75rem; color: var(--text-light); }
+    .rec-item .add-hint { font-size: 0.7rem; color: var(--accent); margin-top: 0.5rem; }
+
+    @media (max-width: 480px) {
+      .header h1 { font-size: 1.1rem; }
+      .item-content { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1>🌸 熊本五天四夜家族文化手作之旅</h1>
+    <p>2025年4月6日 - 4月10日</p>
+    <nav class="nav">
+      <a href="#trip" class="active" onclick="showPage('trip')">行程</a>
+      <a href="#souvenir" onclick="showPage('souvenir')">伴手禮清單</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div id="trip" class="page active">
+      <div class="weather-info">
+        <h3>☁️ 行前氣候須知</h3>
+        <ul>
+          <li>🌡️ 市區白天 18-23°C，清晨/深夜 9-13°C</li>
+          <li>🏔️ 阿蘇山區比市區低 4-6°C</li>
+          <li>👔 建議「厚外套＋薄上衣」洋蔥式穿法</li>
+        </ul>
+      </div>
+
+      <section class="day">
+        <div class="day-header"><span class="day-number">Day 1</span><span class="day-title">4/6 抵達熊本——櫻花古城巡禮</span></div>
+        <div class="day-content">
+          <div class="timeline">
+            <div class="item"><div class="item-time">10:45</div><div class="item-content"><div class="item-illustration">✈️</div><div class="item-details"><div class="item-name">抵達熊本機場 (JX846)</div><a href="https://www.google.com/maps/search/熊本空港" class="map-link" target="_blank">📍 開啟地圖</a></div></div></div>
+            <div class="item"><div class="item-time">12:00 午餐</div><div class="item-content"><div class="item-illustration">🍛</div><div class="item-details"><div class="item-name">SAKURA MACHI Kumamoto</div><div class="item-desc">CoCo壹番屋素食咖哩</div><span class="tag veg">🥬 素食可</span></div></div></div>
+            <div class="item"><div class="item-time">14:00</div><div class="item-content"><div class="item-illustration">🏯</div><div class="item-details"><div class="item-name">熊本城</div><a href="https://www.google.com/maps/search/熊本城" class="map-link" target="_blank">📍 開啟地圖</a></div></div></div>
+            <div class="item"><div class="item-time">18:30 晚餐</div><div class="item-content"><div class="item-illustration">🍚</div><div class="item-details"><div class="item-name">銀杏釜飯</div><span class="tag veg">🥬 素食</span><span class="tag reserve">⚠️ 建議預約</span></div></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="day">
+        <div class="day-header"><span class="day-number">Day 2</span><span class="day-title">4/7 阿蘇震撼——火山、草原與名水</span></div>
+        <div class="day-content">
+          <div class="timeline">
+            <div class="item"><div class="item-time">08:00 出發</div><div class="item-content"><div class="item-illustration">🚗</div><div class="item-details"><div class="item-name">自駕前往阿蘇（車程1.5小時）</div></div></div></div>
+            <div class="item"><div class="item-time">10:30</div><div class="item-content"><div class="item-illustration">🌾</div><div class="item-details"><div class="item-name">草千里之濱 + 阿蘇中岳火山口</div><a href="https://www.google.com/maps/search/草千里ヶ浜" class="map-link" target="_blank">📍 開啟地圖</a></div></div></div>
+            <div class="item"><div class="item-time">12:30 午餐</div><div class="item-content"><div class="item-illustration">🥗</div><div class="item-details"><div class="item-name">阿蘇農場樂園</div><span class="tag veg">🥬 素食可</span></div></div></div>
+            <div class="item"><div class="item-time">18:30 晚餐</div><div class="item-content"><div class="item-illustration">🍽️</div><div class="item-details"><div class="item-name">寫樂 (Syaraku)</div><span class="tag veg">🥬 素食</span><span class="tag reserve">⚠️ 需預約</span></div></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="day">
+        <div class="day-header"><span class="day-number">Day 3</span><span class="day-title">4/8 名園散步、精進料理與手作</span></div>
+        <div class="day-content">
+          <div class="timeline">
+            <div class="item"><div class="item-time">07:30</div><div class="item-content"><div class="item-illustration">🌸</div><div class="item-details"><div class="item-name">水前寺成趣園</div><a href="https://www.google.com/maps/search/水前寺成趣園" class="map-link" target="_blank">📍 開啟地圖</a></div></div></div>
+            <div class="item"><div class="item-time">12:00 午餐</div><div class="item-content"><div class="item-illustration">🍱</div><div class="item-details"><div class="item-name">常 (Tsune)</div><span class="tag veg">🥬 素食</span><span class="tag reserve">⚠️ 需預約</span></div></div></div>
+            <div class="item"><div class="item-time">14:00 手作</div><div class="item-content"><div class="item-illustration">🪵</div><div class="item-details"><div class="item-name">一條屋 榻榻米手作</div></div></div></div>
+            <div class="item"><div class="item-time">18:30 晚餐</div><div class="item-content"><div class="item-illustration">🍛</div><div class="item-details"><div class="item-name">印度食堂</div><span class="tag veg">🥬 素食</span></div></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="day">
+        <div class="day-header"><span class="day-number">Day 4</span><span class="day-title">4/9 通潤橋放水與阿蘇神社</span></div>
+        <div class="day-content">
+          <div class="timeline">
+            <div class="item"><div class="item-time">10:00</div><div class="item-content"><div class="item-illustration">🌊</div><div class="item-details"><div class="item-name">通潤橋 觀光放水</div><a href="https://www.google.com/maps/search/通潤橋" class="map-link" target="_blank">📍 開啟地圖</a></div></div></div>
+            <div class="item"><div class="item-time">12:00 午餐</div><div class="item-content"><div class="item-illustration">🌾</div><div class="item-details"><div class="item-name">久木野蕎麥麵道場 手作</div></div></div></div>
+            <div class="item"><div class="item-time">14:30</div><div class="item-content"><div class="item-illustration">⛩️</div><div class="item-details"><div class="item-name">阿蘇神社</div><a href="https://www.google.com/maps/search/阿蘇神社" class="map-link" target="_blank">📍 開啟地圖</a></div></div></div>
+            <div class="item"><div class="item-time">18:30 晚餐</div><div class="item-content"><div class="item-illustration">🥬</div><div class="item-details"><div class="item-name">Purely Restaurant</div><span class="tag veg">🥬 素食</span></div></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="day">
+        <div class="day-header"><span class="day-number">Day 5</span><span class="day-title">4/10 返程</span></div>
+        <div class="day-content">
+          <div class="timeline">
+            <div class="item"><div class="item-time">08:30 出發</div><div class="item-content"><div class="item-illustration">🚗</div><div class="item-details"><div class="item-name">前往熊本機場</div></div></div></div>
+            <div class="item"><div class="item-time">11:55</div><div class="item-content"><div class="item-illustration">✈️</div><div class="item-details"><div class="item-name">搭乘 JX847 返回桃園</div></div></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tips">
+        <h3>⚠️ 家族旅遊溫馨提醒</h3>
+        <ul>
+          <li><strong>塞車警示：</strong>自駕請避開 07:30~09:00 尖峰時段</li>
+          <li><strong>素食預約：</strong>精緻素食餐廳建議提前預約</li>
+        </ul>
+      </section>
+    </div>
+
+    <!-- Souvenir Page -->
+    <div id="souvenir" class="page">
+      <div class="souvenir-input">
+        <input type="text" id="souvenirInput" placeholder="輸入伴手禮名稱..." onkeypress="handleKeyPress(event)">
+        <button onclick="addSouvenir()">新增</button>
+      </div>
+      <ul class="souvenir-list" id="souvenirList"></ul>
+      
+      <div class="recommendations">
+        <h3>🎁 熊本伴手禮推薦（點擊加入清單）</h3>
+        <div class="rec-grid" id="recGrid"></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav a').forEach(a => a.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+      document.querySelector(`a[href="#${pageId}"]`).classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    let souvenirs = JSON.parse(localStorage.getItem('kumamoto-souvenirs') || '[]');
+
+    function renderSouvenirs() {
+      const list = document.getElementById('souvenirList');
+      if (souvenirs.length === 0) {
+        list.innerHTML = '<li class="souvenir-empty">點擊下方推薦項目或輸入名稱新增伴手禮</li>';
+        return;
+      }
+      list.innerHTML = souvenirs.map((item, index) => `
+        <li class="souvenir-item ${item.bought ? 'bought' : ''}" onclick="toggleBought(${index})">
+          <img class="souvenir-img" src="${item.image || ''}" alt="${item.name}" onerror="this.style.display='none'">
+          <span class="souvenir-name">${item.name}</span>
+          <button class="souvenir-delete" onclick="deleteSouvenir(event, ${index})">✕</button>
+        </li>
+      `).join('');
+    }
+
+    function addSouvenir(name, image) {
+      const input = document.getElementById('souvenirInput');
+      const itemName = name || input.value.trim();
+      if (!itemName) return;
+      if (souvenirs.some(s => s.name === itemName)) {
+        alert('這個伴手禮已經在清單中了！');
+        return;
+      }
+      souvenirs.push({ name: itemName, image: image || null, bought: false });
+      saveSouvenirs();
+      input.value = '';
+      renderSouvenirs();
+    }
+
+    function handleKeyPress(event) {
+      if (event.key === 'Enter') addSouvenir();
+    }
+
+    function toggleBought(index) {
+      souvenirs[index].bought = !souvenirs[index].bought;
+      saveSouvenirs();
+      renderSouvenirs();
+    }
+
+    function deleteSouvenir(event, index) {
+      event.stopPropagation();
+      souvenirs.splice(index, 1);
+      saveSouvenirs();
+      renderSouvenirs();
+    }
+
+    function saveSouvenirs() {
+      localStorage.setItem('kumamoto-souvenirs', JSON.stringify(souvenirs));
+    }
+
+    // 推薦伴手禮 - 使用真實相關的圖片
+    const recommendations = [
+      { name: "譽の陣太鼓", desc: "熊本代表銘菓，紅豆麻糬", image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=200&h=200&fit=crop" },
+      { name: "芥末蓮根", desc: "酥脆蓮根，熊本經典", image: "https://images.unsplash.com/photo-1582738411706-bfc8e691d48c?w=200&h=200&fit=crop" },
+      { name: "武者返", desc: "熊本城石垣造型餅乾", image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=200&h=200&fit=crop" },
+      { name: "熊本熊商品", desc: "超可愛熊本熊周邊", image: "https://images.unsplash.com/photo-1588412038924-5a1c4d2c5c1c?w=200&h=200&fit=crop" },
+      { name: "明蝦煎餅", desc: "天草特產海鮮煎餅", image: "https://images.unsplash.com/photo-1565693394-9b3f3c1e0d4c?w=200&h=200&fit=crop" },
+      { name: "阿蘇牛奶糖", desc: "使用阿蘇牛乳", image: "https://images.unsplash.com/photo-1581798258726-78c61c724b91?w=200&h=200&fit=crop" },
+      { name: "南阿蘇啤酒", desc: "當地精釀啤酒", image: "https://images.unsplash.com/photo-1569923303237-f1c3b03e0d90?w=200&h=200&fit=crop" },
+      { name: "來民澀團扇", desc: "400年傳統工藝", image: "https://images.unsplash.com/photo-1594631252845-29fc4cc8cde9?w=200&h=200&fit=crop" }
+    ];
+
+    function renderRecommendations() {
+      const grid = document.getElementById('recGrid');
+      grid.innerHTML = recommendations.map((item) => `
+        <div class="rec-item" onclick="addSouvenir('${item.name}', '${item.image}')">
+          <img src="${item.image}" alt="${item.name}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect fill=%22%23f5f5f5%22 width=%22100%22 height=%22100%22/><text fill=%22%23999%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22>🎁</text></svg>'">
+          <h4>${item.name}</h4>
+          <p>${item.desc}</p>
+          <div class="add-hint">+ 點擊加入清單</div>
+        </div>
+      `).join('');
+    }
+
+    renderSouvenirs();
+    renderRecommendations();
+  </script>
+</body>
+</html>
