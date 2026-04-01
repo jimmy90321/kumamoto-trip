@@ -170,7 +170,7 @@
     <!-- Souvenir Page -->
     <div id="souvenir" class="page">
       <div class="souvenir-input">
-        <input type="text" id="souvenirInput" placeholder="輸入伴手禮名稱..." onkeypress="handleKeyPress(event)">
+        <input type="text" id="souvenirInput" placeholder="輸入伴手禮名稱...(可從上方推薦點擊加入，已有圖片)" onkeypress="handleKeyPress(event)">
         <button onclick="addSouvenir()">新增</button>
       </div>
       <ul class="souvenir-list" id="souvenirList"></ul>
@@ -212,11 +212,24 @@
       const input = document.getElementById('souvenirInput');
       const itemName = name || input.value.trim();
       if (!itemName) return;
+      
+      // 檢查是否已經存在
       if (souvenirs.some(s => s.name === itemName)) {
         alert('這個伴手禮已經在清單中了！');
         return;
       }
-      souvenirs.push({ name: itemName, image: image || null, bought: false });
+      
+      // 如果沒有提供圖片，嘗試搜尋相關圖片
+      let itemImage = image;
+      if (!itemImage) {
+        // 嘗試從推薦清單中找到相同名稱的圖片
+        const matchedRec = recommendations.find(r => r.name === itemName);
+        if (matchedRec) {
+          itemImage = matchedRec.image;
+        }
+      }
+      
+      souvenirs.push({ name: itemName, image: itemImage || null, bought: false });
       saveSouvenirs();
       input.value = '';
       renderSouvenirs();
