@@ -208,7 +208,7 @@
       `).join('');
     }
 
-    function addSouvenir(name, image) {
+    async function addSouvenir(name, image) {
       const input = document.getElementById('souvenirInput');
       const itemName = name || input.value.trim();
       if (!itemName) return;
@@ -219,16 +219,32 @@
         return;
       }
       
-      // 嘗試匹配圖片（從推薦清單）
+      // 嘗試匹配圖片
       let itemImage = image;
+      let itemUrl = null;
+      
       if (!itemImage) {
+        // 從推薦清單找
         const matchedRec = recommendations.find(r => r.name === itemName);
         if (matchedRec) {
           itemImage = matchedRec.image;
+          itemUrl = matchedRec.url;
+        } else {
+          // 從 API 搜尋
+          try {
+            const response = await fetch(`/api/search-image?name=${encodeURIComponent(itemName)}`);
+            if (response.ok) {
+              const data = await response.json();
+              itemImage = data.image;
+              itemUrl = data.url;
+            }
+          } catch (e) {
+            console.log('搜尋圖片失敗', e);
+          }
         }
       }
       
-      souvenirs.push({ name: itemName, image: itemImage || null, bought: false });
+      souvenirs.push({ name: itemName, image: itemImage || null, url: itemUrl || null, bought: false });
       saveSouvenirs();
       input.value = '';
       renderSouvenirs();

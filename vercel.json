@@ -4,12 +4,16 @@
     {
       "src": "index.html",
       "use": "@vercel/static"
+    },
+    {
+      "src": "api/search-image.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "src": "/",
-      "dest": "/index.html"
+      "src": "/api/search-image",
+      "dest": "/api/search-image.js"
     },
     {
       "src": "/(.*)",
