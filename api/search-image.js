@@ -1,6 +1,6 @@
 const https = require('https');
 
-// 優先匹配的伴手禮映射
+// 伴手禮關鍵字映射 - 只回傳真的相關的圖片
 const souvenirImageMap = {
   // 熊本
   "陣太鼓": { image: "https://kumamoto.guide/files/92d47b1a-18b6-4486-8a54-b4cdd27a671d_l.jpg", url: "https://kumamoto.guide/spots/detail/14" },
@@ -8,7 +8,6 @@ const souvenirImageMap = {
   "芥末蓮根": { image: "https://kumamoto.guide/files/a8a9d645-c8d4-401d-8b4d-78ca652cb964_s.jpg", url: "https://kumamoto.guide/brand/foods/foods_04.html" },
   "蓮根": { image: "https://kumamoto.guide/files/a8a9d645-c8d4-401d-8b4d-78ca652cb964_s.jpg", url: "https://kumamoto.guide/brand/foods/foods_04.html" },
   "武者返": { image: "https://47okashi.com/wp-content/uploads/2022/11/【無料有料】ウェブ商品写真-3.png", url: "https://47okashi.com/info/mushagaeshi/" },
-  "武者がえし": { image: "https://47okashi.com/wp-content/uploads/2022/11/【無料有料】ウェブ商品写真-3.png", url: "https://47okashi.com/info/mushagaeshi/" },
   "明蝦煎餅": { image: "http://www.takaraconfect.co.jp/images/products/kurumaebi001.jpg", url: "http://www.takaraconfect.co.jp/commodity_007.html" },
   "車えび": { image: "http://www.takaraconfect.co.jp/images/products/kurumaebi001.jpg", url: "http://www.takaraconfect.co.jp/commodity_007.html" },
   "天草": { image: "http://www.takaraconfect.co.jp/images/products/kurumaebi001.jpg", url: "http://www.takaraconfect.co.jp/commodity_007.html" },
@@ -52,15 +51,14 @@ const souvenirImageMap = {
   "太陽餅": { image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=300", url: "https://zh.wikipedia.org/wiki/太陽餅" },
   "牛軋糖": { image: "https://images.unsplash.com/photo-1581798258726-78c61c724b91?w=300", url: "https://zh.wikipedia.org/wiki/牛軋糖" },
   "蛋黃派": { image: "https://images.unsplash.com/photo-1481391319760-47d736725a87?w=300", url: "https://zh.wikipedia.org/wiki/蛋黃派" },
-  "貢梨": { image: "https://images.unsplash.com/photo-1514756331096-3448d4c1e8a8?w=300", url: "https://zh.wikipedia.org/wiki/梨山蜜梨" },
   "梨山": { image: "https://images.unsplash.com/photo-1514756331096-3448d4c1e8a8?w=300", url: "https://zh.wikipedia.org/wiki/梨山" },
   
-  // 茶葉/饮品
+  // 茶葉/飲品
   "高山茶": { image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300", url: "https://zh.wikipedia.org/wiki/高山茶" },
   "烏龍茶": { image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300", url: "https://zh.wikipedia.org/wiki/烏龍茶" },
   "茶葉": { image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300", url: "https://zh.wikipedia.org/wiki/茶葉" },
   
-  // 甜點/零食
+  // 甜點
   "巧克力": { image: "https://images.unsplash.com/photo-1511381939415-e440db668de3?w=300", url: "https://zh.wikipedia.org/wiki/巧克力" },
   "糖果": { image: "https://images.unsplash.com/photo-1581798258726-78c61c724b91?w=300", url: "https://zh.wikipedia.org/wiki/糖果" },
   "餅乾": { image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=300", url: "https://zh.wikipedia.org/wiki/餅乾" },
@@ -71,32 +69,6 @@ const souvenirImageMap = {
   "蘋果": { image: "https://images.unsplash.com/photo-1514756331096-3448d4c1e8a8?w=300", url: "https://zh.wikipedia.org/wiki/蘋果" },
   "橘子": { image: "https://images.unsplash.com/photo-1514756331096-3448d4c1e8a8?w=300", url: "https://zh.wikipedia.org/wiki/橘子" }
 };
-
-// 從 loremflickr 獲取圖片 - 真正根據關鍵字搜尋
-function searchImage(keyword) {
-  return new Promise((resolve, reject) => {
-    // 使用關鍵字搜尋
-    const url = `https://loremflickr.com/300/300/${encodeURIComponent(keyword)}?random=${Date.now()}`;
-    
-    const options = {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-      }
-    };
-    
-    https.get(url, options, (res) => {
-      if (res.statusCode === 302 || res.statusCode === 200) {
-        const imageUrl = res.headers.location || url;
-        resolve({
-          image: imageUrl,
-          url: "https://loremflickr.com"
-        });
-      } else {
-        reject(new Error('No image'));
-      }
-    }).on('error', reject);
-  });
-}
 
 module.exports = async (req, res) => {
   const { name } = req.query;
@@ -110,30 +82,16 @@ module.exports = async (req, res) => {
     return res.json(souvenirImageMap[name]);
   }
   
-  // 2. 模糊匹配 - 檢查每個關鍵字
+  // 2. 模糊匹配
   for (const [key, value] of Object.entries(souvenirImageMap)) {
     if (name.includes(key) || key.includes(name)) {
       return res.json(value);
     }
   }
   
-  // 3. 沒有找到 → 真的用名稱去搜尋圖片
-  try {
-    const result = await searchImage(name);
-    // 確保圖片URL是完整的
-    let finalImage = result.image;
-    if (finalImage.startsWith('/cache/')) {
-      finalImage = 'https://loremflickr.com' + finalImage;
-    }
-    return res.json({
-      image: finalImage,
-      url: result.url
-    });
-  } catch (e) {
-    // 4. 搜尋失敗，使用 placeholder
-    return res.json({
-      image: `https://via.placeholder.com/300x200/e0e0e0/666666?text=${encodeURIComponent(name)}`,
-      url: ""
-    });
-  }
+  // 3. 沒有找到 → 回傳錯誤（不隨便給圖片）
+  return res.status(404).json({ 
+    error: '找不到相關圖片，請從上方推薦項目新增',
+    suggestion: '可嘗試：抹茶、鳳梨酥、綠茶、巧克力、餅乾等關鍵字'
+  });
 };
