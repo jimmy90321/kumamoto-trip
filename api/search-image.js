@@ -120,7 +120,15 @@ module.exports = async (req, res) => {
   // 3. 沒有找到 → 真的用名稱去搜尋圖片
   try {
     const result = await searchImage(name);
-    return res.json(result);
+    // 確保圖片URL是完整的
+    let finalImage = result.image;
+    if (finalImage.startsWith('/cache/')) {
+      finalImage = 'https://loremflickr.com' + finalImage;
+    }
+    return res.json({
+      image: finalImage,
+      url: result.url
+    });
   } catch (e) {
     // 4. 搜尋失敗，使用 placeholder
     return res.json({
