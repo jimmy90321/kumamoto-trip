@@ -79,7 +79,7 @@
   <header class="header">
     <h1>🌸 熊本五天四夜家族文化手作之旅</h1>
     <p>2025年4月6日 - 4月10日</p>
-    <p style="font-size:0.75rem; opacity:0.8;">版本 2.0 (2026-04-01)</p>
+    <p style="font-size:0.75rem; opacity:0.8;">版本 2.1 (2026-04-02)</p>
     <nav class="nav">
       <a href="#trip" class="active" onclick="showPage('trip')">行程</a>
       <a href="#souvenir" onclick="showPage('souvenir')">伴手禮清單</a>
@@ -176,70 +176,34 @@
       statusDiv.style.display = 'block';
       
       let itemImage = image;
-      let itemUrl = null;
+      let itemUrl = '';
       
+      // 從推薦清單找（精確匹配優先）
+      const matchedRec = recommendations.find(r => r.name === itemName);
+      if (matchedRec) {
+        itemImage = matchedRec.image;
+        itemUrl = matchedRec.url;
+      }
+      
+      // 如果推薦清單沒有，從 API 搜尋
       if (!itemImage) {
-        // 從推薦清單找
-        const matchedRec = recommendations.find(r => r.name === itemName);
-        if (matchedRec) {
-          itemImage = matchedRec.image;
-          itemUrl = matchedRec.url;
-        } else {
-          // 方法1: 從 API 搜尋服務器端維基百科
-          try {
-            const response = await fetch(`/api/search-image?name=${encodeURIComponent(itemName)}`);
-            const data = await response.json();
-            if (data.image) {
-              itemImage = data.image;
-              itemUrl = data.url;
-            }
-          } catch (e) {
-            console.log('API搜尋失敗', e);
+        try {
+          const response = await fetch(`/api/search-image?name=${encodeURIComponent(itemName)}`);
+          const data = await response.json();
+          if (data.image) {
+            itemImage = data.image;
+            itemUrl = data.url || '';
           }
-          
-          // 方法2: 從維基百科客戶端搜尋
-          if (!itemImage) {
-            try {
-              let wikiResponse = await fetch(`https://zh.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(itemName)}`);
-              let wikiData = await wikiResponse.json();
-              if (!wikiData.thumbnail) {
-                wikiResponse = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(itemName)}`);
-                wikiData = await wikiResponse.json();
-              }
-              if (wikiData.thumbnail) {
-                itemImage = wikiData.thumbnail.source;
-                itemUrl = wikiData.content_urls?.desktop?.page || '';
-              }
-            } catch (e2) {
-              console.log('維基百科搜尋失敗', e2);
-            }
-          }
-          
-          // 方法3: 用 CORS proxy 爬蟲從 Bing 搜尋圖片
-          if (!itemImage) {
-            try {
-              const proxyUrl = 'https://api.allorigins.win/raw?url=';
-              const bingUrl = `https://www.bing.com/images/search?q=${encodeURIComponent(itemName)}&first=1&count=1`;
-              const response = await fetch(proxyUrl + encodeURIComponent(bingUrl));
-              const html = await response.text();
-              
-              // 提取圖片URL
-              const match = html.match(/murl"[^"]*"([^"]+)"/) || html.match(/"image"([^"]+)"/);
-              if (match) {
-                itemImage = match[1] || match[0];
-                itemUrl = 'https://www.bing.com';
-              }
-            } catch (e3) {
-              console.log('Bing爬蟲失敗', e3);
-            }
-          }
+        } catch (e) {
+          console.log('API error:', e);
         }
       }
       
+      // 隱藏搜尋狀態
       statusDiv.style.display = 'none';
       
       // 新增到清單
-      souvenirs.push({ name: itemName, image: itemImage || null, url: itemUrl || null, bought: false });
+      souvenirs.push({ name: itemName, image: itemImage, url: itemUrl, bought: false });
       saveSouvenirs();
       input.value = '';
       renderSouvenirs();
