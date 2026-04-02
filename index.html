@@ -79,7 +79,7 @@
   <header class="header">
     <h1>🌸 熊本五天四夜家族文化手作之旅</h1>
     <p>2025年4月6日 - 4月10日</p>
-    <p style="font-size:0.75rem; opacity:0.8;">版本 2.2 (2026-04-02)</p>
+    <p style="font-size:0.75rem; opacity:0.8;">版本 2.3 (2026-04-02)</p>
     <nav class="nav">
       <a href="#trip" class="active" onclick="showPage('trip')">行程</a>
       <a href="#souvenir" onclick="showPage('souvenir')">伴手禮清單</a>
@@ -196,6 +196,20 @@
           }
         } catch (e) {
           console.log('API error:', e);
+        }
+      }
+      
+      // 如果 API 也沒有，嘗試客戶端維基百科
+      if (!itemImage) {
+        try {
+          const wikiRes = await fetch(`https://zh.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(itemName)}`);
+          const wikiData = await wikiRes.json();
+          if (wikiData.thumbnail) {
+            itemImage = wikiData.thumbnail.source;
+            itemUrl = wikiData.content_urls?.desktop?.page || '';
+          }
+        } catch (e) {
+          console.log('Wiki fallback error:', e);
         }
       }
       
