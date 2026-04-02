@@ -1,7 +1,8 @@
 const https = require('https');
 
-// 伴手禮關鍵字映射
+// 擴展的伴手禮關鍵字映射 - 更多常見物品
 const souvenirImageMap = {
+  // 熊本
   "陣太后": { image: "https://kumamoto.guide/files/92d47b1a-18b6-4486-8a54-b4cdd27a671d_l.jpg", url: "https://kumamoto.guide/spots/detail/14" },
   "芥末蓮根": { image: "https://kumamoto.guide/files/a8a9d645-c8d4-401d-8b4d-78ca652cb964_s.jpg", url: "https://kumamoto.guide/brand/foods/foods_04.html" },
   "武者返": { image: "https://47okashi.com/wp-content/uploads/2022/11/【無料有料】ウェブ商品写真-3.png", url: "https://47okashi.com/info/mushagaeshi/" },
@@ -16,6 +17,8 @@ const souvenirImageMap = {
   "太平燕": { image: "https://kumamoto.guide/files/c9e4cc06-ca9e-4596-b7aa-911e88977c4a_s.jpg", url: "https://kumamoto.guide/brand/foods/foods_03.html" },
   "阿蘇牛": { image: "https://kumamoto.guide/files/cb5d8f5a-6ae1-41be-84d8-cdb3b5710422_s.jpg", url: "https://kumamoto.guide/brand/foods/foods_02.html" },
   "拉麵": { image: "https://kumamoto.guide/files/6908e4fc-aea1-4033-98e1-0907f05c9db7_s.jpg", url: "https://kumamoto.guide/brand/foods/foods_01.html" },
+  
+  // 日本著名伴手禮
   "抹茶": { image: "https://images.unsplash.com/photo-1515823064-d6e0c04616a7?w=300", url: "https://zh.wikipedia.org/wiki/抹茶" },
   "綠茶": { image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300", url: "https://zh.wikipedia.org/wiki/靜岡茶" },
   "東京芭娜娜": { image: "https://images.unsplash.com/photo-1481391319760-47d736725a87?w=300", url: "https://ja.wikipedia.org/wiki/東京ばなな" },
@@ -23,33 +26,89 @@ const souvenirImageMap = {
   "royce": { image: "https://images.unsplash.com/photo-1511381939415-e440db668de3?w=300", url: "https://ja.wikipedia.org/wiki/ロイズ" },
   "大福": { image: "https://images.unsplash.com/photo-1576085898323-218337e3e43c?w=300", url: "https://zh.wikipedia.org/wiki/大福" },
   "羊羹": { image: "https://images.unsplash.com/photo-1582738411706-bfc8e691d48c?w=300", url: "https://zh.wikipedia.org/wiki/羊羹" },
+  "最中": { image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=300", url: "https://zh.wikipedia.org/wiki/最中" },
+  "仙貝": { image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=300", url: "https://zh.wikipedia.org/wiki/仙貝" },
+  
+  // 台灣
   "鳳梨酥": { image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=300", url: "https://zh.wikipedia.org/wiki/鳳梨酥" },
   "太陽餅": { image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=300", url: "https://zh.wikipedia.org/wiki/太陽餅" },
   "牛軋糖": { image: "https://images.unsplash.com/photo-1581798258726-78c61c724b91?w=300", url: "https://zh.wikipedia.org/wiki/牛軋糖" },
+  "蛋黃派": { image: "https://images.unsplash.com/photo-1481391319760-47d736725a87?w=300", url: "https://zh.wikipedia.org/wiki/蛋黃派" },
+  
+  // 甜點/零食
   "巧克力": { image: "https://images.unsplash.com/photo-1511381939415-e440db668de3?w=300", url: "https://zh.wikipedia.org/wiki/巧克力" },
   "餅乾": { image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=300", url: "https://zh.wikipedia.org/wiki/餅乾" },
+  "蛋糕": { image: "https://images.unsplash.com/photo-1481391319760-47d736725a87?w=300", url: "https://zh.wikipedia.org/wiki/蛋糕" },
   "草莓": { image: "https://images.unsplash.com/photo-1514756331096-3448d4c1e8a8?w=300", url: "https://zh.wikipedia.org/wiki/草莓" },
-  "蘋果": { image: "https://images.unsplash.com/photo-1514756331096-3448d4c1e8a8?w=300", url: "https://zh.wikipedia.org/wiki/蘋果" }
+  "蘋果": { image: "https://images.unsplash.com/photo-1514756331096-3448d4c1e8a8?w=300", url: "https://zh.wikipedia.org/wiki/蘋果" },
+  "香蕉": { image: "https://images.unsplash.com/photo-1571771894821-9b6683c3ca2d?w=300", url: "https://zh.wikipedia.org/wiki/香蕉" },
+  "橘子": { image: "https://images.unsplash.com/photo-1514756331096-3448d4c1e8a8?w=300", url: "https://zh.wikipedia.org/wiki/橘子" },
+  "葡萄": { image: "https://images.unsplash.com/photo-1537640538962-0e5c3fc15290?w=300", url: "https://zh.wikipedia.org/wiki/葡萄" },
+  "西瓜": { image: "https://images.unsplash.com/photo-1563114773-84221bd62daa?w=300", url: "https://zh.wikipedia.org/wiki/西瓜" },
+  
+  // 食物
+  "米飯": { image: "https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?w=300", url: "https://zh.wikipedia.org/wiki/米飯" },
+  "麵包": { image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=300", url: "https://zh.wikipedia.org/wiki/麵包" },
+  "義大利麵": { image: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=300", url: "https://zh.wikipedia.org/wiki/義大利麵" },
+  "披薩": { image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300", url: "https://zh.wikipedia.org/wiki/披薩" },
+  "漢堡": { image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300", url: "https://zh.wikipedia.org/wiki/漢堡" },
+  "咖哩": { image: "https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=300", url: "https://zh.wikipedia.org/wiki/咖哩" },
+  "火鍋": { image: "https://images.unsplash.com/photo-1574672280600-4accfa5b6f98?w=300", url: "https://zh.wikipedia.org/wiki/火鍋" },
+  
+  // 飲品
+  "奶茶": { image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300", url: "https://zh.wikipedia.org/wiki/奶茶" },
+  "咖啡": { image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=300", url: "https://zh.wikipedia.org/wiki/咖啡" },
+  "可樂": { image: "https://images.unsplash.com/photo-1629203851122-3726ecdf080e?w=300", url: "https://zh.wikipedia.org/wiki/可樂" },
+  "果汁": { image: "https://images.unsplash.com/photo-1600270584438-9e5de27d1c2e?w=300", url: "https://zh.wikipedia.org/wiki/果汁" },
+  "啤酒": { image: "https://images.unsplash.com/photo-1569923303237-f1c3b03e0d90?w=300", url: "https://zh.wikipedia.org/wiki/啤酒" },
+  "紅酒": { image: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=300", url: "https://zh.wikipedia.org/wiki/紅酒" },
+  
+  // 3C產品
+  "iphone": { image: "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=300", url: "https://zh.wikipedia.org/wiki/IPhone" },
+  "手機": { image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300", url: "https://zh.wikipedia.org/wiki/手機" },
+  "平板": { image: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=300", url: "https://zh.wikipedia.org/wiki/平板電腦" },
+  "筆電": { image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=300", url: "https://zh.wikipedia.org/wiki/筆記型電腦" },
+  "相機": { image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=300", url: "https://zh.wikipedia.org/wiki/相機" },
+  "耳機": { image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300", url: "https://zh.wikipedia.org/wiki/耳機" },
+  
+  // 日常用品
+  "背包": { image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a54?w=300", url: "https://zh.wikipedia.org/wiki/背包" },
+  "行李箱": { image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a54?w=300", url: "https://zh.wikipedia.org/wiki/行李箱" },
+  "太陽眼鏡": { image: "https://images.unsplash.com/photo-1572635196237-14b913f惠22e?w=300", url: "https://zh.wikipedia.org/wiki/太陽眼鏡" },
+  "手錶": { image: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=300", url: "https://zh.wikipedia.org/wiki/手錶" },
+  "項鍊": { image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=300", url: "https://zh.wikipedia.org/wiki/項鍊" },
+  
+  // 花卉
+  "玫瑰": { image: "https://images.unsplash.com/photo-1518882605630-8eb0c540aeeb?w=300", url: "https://zh.wikipedia.org/wiki/玫瑰" },
+  "鬱金香": { image: "https://images.unsplash.com/photo-1520763185298-1b4c098c7bb5?w=300", url: "https://zh.wikipedia.org/wiki/鬱金香" },
+  "櫻花": { image: "https://images.unsplash.com/photo-1522383225653-d777b9c79bbe?w=300", url: "https://zh.wikipedia.org/wiki/櫻花" },
+  "蓮花": { image: "https://images.unsplash.com/photo-1507608616759-3f2b84d65afe?w=300", url: "https://zh.wikipedia.org/wiki/蓮花" },
+  
+  // 風景
+  "海灘": { image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=300", url: "https://zh.wikipedia.org/wiki/海灘" },
+  "山": { image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=300", url: "https://zh.wikipedia.org/wiki/山" },
+  "日落": { image: "https://images.unsplash.com/photo-1495616811223-99d2aaee6ea9?w=300", url: "https://zh.wikipedia.org/wiki/日落" },
+  "夜景": { image: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=300", url: "https://zh.wikipedia.org/wiki/夜景" }
 };
 
-function fetchWiki(keyword) {
+// 從維基百科 REST API 獲取圖片
+function searchWikipedia(keyword) {
   return new Promise((resolve, reject) => {
-    const zhUrl = `https://zh.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(keyword)}`;
-    const enUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(keyword)}`;
+    const urls = [
+      `https://zh.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(keyword)}`,
+      `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(keyword)}`
+    ];
     
-    const checkUrl = (url, callback) => {
-      const req = https.get(url, (res) => {
-        // 跟隨重導向
+    let tried = 0;
+    const tryUrl = (i) => {
+      if (i >= urls.length) {
+        reject(new Error('No wiki image'));
+        return;
+      }
+      
+      const req = https.get(urls[i], (res) => {
         if (res.statusCode === 302 || res.statusCode === 301) {
-          const location = res.headers.location;
-          if (location) {
-            checkUrl(location, callback);
-            return;
-          }
-        }
-        
-        if (res.statusCode !== 200) {
-          callback(null);
+          tryUrl(0); // restart with redirect
           return;
         }
         
@@ -58,36 +117,21 @@ function fetchWiki(keyword) {
         res.on('end', () => {
           try {
             const json = JSON.parse(data);
-            if (json.thumbnail && json.thumbnail.source) {
-              callback({ image: json.thumbnail.source, url: json.content_urls?.desktop?.page || '' });
+            if (json.thumbnail) {
+              resolve({ image: json.thumbnail.source, url: json.content_urls?.desktop?.page || '' });
             } else {
-              callback(null);
+              tryUrl(i + 1);
             }
           } catch (e) {
-            callback(null);
+            tryUrl(i + 1);
           }
         });
       });
       
-      req.on('error', () => callback(null));
-      req.setTimeout(5000, () => { req.destroy(); callback(null); });
+      req.on('error', () => tryUrl(i + 1));
     };
     
-    // 先嘗試中文
-    checkUrl(zhUrl, (zhResult) => {
-      if (zhResult) {
-        resolve(zhResult);
-      } else {
-        // 中文沒有，嘗試英文
-        checkUrl(enUrl, (enResult) => {
-          if (enResult) {
-            resolve(enResult);
-          } else {
-            reject(new Error('No wiki image'));
-          }
-        });
-      }
-    });
+    tryUrl(0);
   });
 }
 
@@ -98,21 +142,23 @@ module.exports = async (req, res) => {
     return res.status(400).json({ error: '名稱不能為空' });
   }
   
+  const searchName = name.toLowerCase().trim();
+  
   // 1. 精確匹配
-  if (souvenirImageMap[name]) {
-    return res.json(souvenirImageMap[name]);
+  if (souvenirImageMap[searchName]) {
+    return res.json(souvenirImageMap[searchName]);
   }
   
   // 2. 模糊匹配
   for (const [key, value] of Object.entries(souvenirImageMap)) {
-    if (name.includes(key) || key.includes(name)) {
+    if (searchName.includes(key) || key.includes(searchName)) {
       return res.json(value);
     }
   }
   
   // 3. 維基百科搜尋
   try {
-    const result = await fetchWiki(name);
+    const result = await searchWikipedia(name);
     return res.json(result);
   } catch (e) {
     return res.json({ image: null, url: "", message: '請在客戶端搜尋維基百科' });
