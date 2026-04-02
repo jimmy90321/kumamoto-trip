@@ -37,7 +37,9 @@ const souvenirImageMap = {
   
   // 甜點/零食
   "巧克力": { image: "https://images.unsplash.com/photo-1511381939415-e440db668de3?w=300", url: "https://zh.wikipedia.org/wiki/巧克力" },
+  "朱古力": { image: "https://images.unsplash.com/photo-1511381939415-e440db668de3?w=300", url: "https://zh.wikipedia.org/wiki/巧克力" },
   "餅乾": { image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=300", url: "https://zh.wikipedia.org/wiki/餅乾" },
+  "曲奇": { image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=300", url: "https://zh.wikipedia.org/wiki/餅乾" },
   "蛋糕": { image: "https://images.unsplash.com/photo-1481391319760-47d736725a87?w=300", url: "https://zh.wikipedia.org/wiki/蛋糕" },
   "草莓": { image: "https://images.unsplash.com/photo-1514756331096-3448d4c1e8a8?w=300", url: "https://zh.wikipedia.org/wiki/草莓" },
   "蘋果": { image: "https://images.unsplash.com/photo-1514756331096-3448d4c1e8a8?w=300", url: "https://zh.wikipedia.org/wiki/蘋果" },
@@ -88,50 +90,105 @@ const souvenirImageMap = {
   "海灘": { image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=300", url: "https://zh.wikipedia.org/wiki/海灘" },
   "山": { image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=300", url: "https://zh.wikipedia.org/wiki/山" },
   "日落": { image: "https://images.unsplash.com/photo-1495616811223-99d2aaee6ea9?w=300", url: "https://zh.wikipedia.org/wiki/日落" },
-  "夜景": { image: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=300", url: "https://zh.wikipedia.org/wiki/夜景" }
+  "夜景": { image: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=300", url: "https://zh.wikipedia.org/wiki/夜景" },
+  
+  // 化妝品/保養品
+  "面膜": { image: "https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=300", url: "https://zh.wikipedia.org/wiki/面膜" },
+  "保養品": { image: "https://images.unsplash.com/photo-1571781535014-53bd9429f636?w=300", url: "https://zh.wikipedia.org/wiki/護膚品" },
+  "化妝品": { image: "https://images.unsplash.com/photo-1596462502278-27bfdd403348?w=300", url: "https://zh.wikipedia.org/wiki/化妝品" },
+  "香水": { image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=300", url: "https://zh.wikipedia.org/wiki/香水" },
+  "口紅": { image: "https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=300", url: "https://zh.wikipedia.org/wiki/口紅" },
+  "乳液": { image: "https://images.unsplash.com/photo-1571781535014-53bd9429f636?w=300", url: "https://zh.wikipedia.org/wiki/乳液" },
+  "洗面乳": { image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=300", url: "https://zh.wikipedia.org/wiki/洗面乳" },
+  
+  // 更多常見物品
+  "衣服": { image: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=300", url: "https://zh.wikipedia.org/wiki/衣服" },
+  "鞋子": { image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300", url: "https://zh.wikipedia.org/wiki/鞋子" },
+  "襪子": { image: "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=300", url: "https://zh.wikipedia.org/wiki/襪子" },
+  "帽子": { image: "https://images.unsplash.com/photo-1514327605112-b887c0e61c0a?w=300", url: "https://zh.wikipedia.org/wiki/帽子" },
+  "圍巾": { image: "https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?w=300", url: "https://zh.wikipedia.org/wiki/圍巾" },
+  "手套": { image: "https://images.unsplash.com/photo-1598032895397-b9472444bf93?w=300", url: "https://zh.wikipedia.org/wiki/手套" },
+  "包包": { image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=300", url: "https://zh.wikipedia.org/wiki/包_(容器)" },
+  "錢包": { image: "https://images.unsplash.com/photo-1627123424574-724758594e93?w=300", url: "https://zh.wikipedia.org/wiki/錢包" },
+  
+  // 玩具/公仔
+  "玩具": { image: "https://images.unsplash.com/photo-1558060370-d46a5807d6c7?w=300", url: "https://zh.wikipedia.org/wiki/玩具" },
+  "公仔": { image: "https://images.unsplash.com/photo-1608889825103-eb5ed705b11c?w=300", url: "https://zh.wikipedia.org/wiki/卡通公仔" },
+  "模型": { image: "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=300", url: "https://zh.wikipedia.org/wiki/模型" },
+  "扭蛋": { image: "https://images.unsplash.com/photo-1608889825103-eb5ed705b11c?w=300", url: "https://zh.wikipedia.org/wiki/扭蛋" },
+  
+  // 文具
+  "筆記本": { image: "https://images.unsplash.com/photo-1531346878377-a5be20888e57?w=300", url: "https://zh.wikipedia.org/wiki/筆記本" },
+  "筆": { image: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=300", url: "https://zh.wikipedia.org/wiki/筆" },
+  "橡皮擦": { image: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=300", url: "https://zh.wikipedia.org/wiki/橡皮擦" },
+  
+  // 珠寶
+  "戒指": { image: "https://images.unsplash.com/photo-1605100804763-eb5ed705b11c?w=300", url: "https://zh.wikipedia.org/wiki/戒指" },
+  "手環": { image: "https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=300", url: "https://zh.wikipedia.org/wiki/手環" },
+  "耳環": { image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=300", url: "https://zh.wikipedia.org/wiki/耳環" },
+  
+  // 零食
+  "糖果": { image: "https://images.unsplash.com/photo-1581798258726-78c61c724b91?w=300", url: "https://zh.wikipedia.org/wiki/糖果" },
+  "果凍": { image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=300", url: "https://zh.wikipedia.org/wiki/果凍" },
+  "布丁": { image: "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=300", url: "https://zh.wikipedia.org/wiki/布丁" },
+  "冰淇淋": { image: "https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?w=300", url: "https://zh.wikipedia.org/wiki/冰淇淋" },
+  "優格": { image: "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=300", url: "https://zh.wikipedia.org/wiki/酸奶" },
+  
+  // 茶
+  "烏龍茶": { image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300", url: "https://zh.wikipedia.org/wiki/烏龍茶" },
+  "鐵觀音": { image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300", url: "https://zh.wikipedia.org/wiki/鐵觀音" },
+  "普洱茶": { image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300", url: "https://zh.wikipedia.org/wiki/普洱茶" },
+  "菊花茶": { image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300", url: "https://zh.wikipedia.org/wiki/菊花茶" },
+  
+  // 調味料
+  "醬油": { image: "https://images.unsplash.com/photo-1590592228283-e4b9d7c4f01d?w=300", url: "https://zh.wikipedia.org/wiki/醬油" },
+  "鹽": { image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300", url: "https://zh.wikipedia.org/wiki/鹽" },
+  "胡椒": { image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300", url: "https://zh.wikipedia.org/wiki/胡椒" },
+  "糖": { image: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=300", url: "https://zh.wikipedia.org/wiki/糖" },
+  
+  // 其他
+  "傘": { image: "https://images.unsplash.com/photo-1527212884579-2b2f52b07a5a?w=300", url: "https://zh.wikipedia.org/wiki/傘" },
+  "杯子": { image: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=300", url: "https://zh.wikipedia.org/wiki/杯子" },
+  "馬克杯": { image: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=300", url: "https://zh.wikipedia.org/wiki/馬克杯" },
+  "環保袋": { image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a54?w=300", url: "https://zh.wikipedia.org/wiki/環保袋" },
+  "伴手禮": { image: "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?w=300", url: "https://zh.wikipedia.org/wiki/伴手禮" },
+  "禮物": { image: "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?w=300", url: "https://zh.wikipedia.org/wiki/禮物" }
 };
 
 // 從維基百科 REST API 獲取圖片
 function searchWikipedia(keyword) {
   return new Promise((resolve, reject) => {
-    const urls = [
-      `https://zh.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(keyword)}`,
-      `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(keyword)}`
-    ];
-    
-    let tried = 0;
-    const tryUrl = (i) => {
-      if (i >= urls.length) {
-        reject(new Error('No wiki image'));
-        return;
+    const options = {
+      hostname: 'zh.wikipedia.org',
+      path: `/api/rest_v1/page/summary/${encodeURIComponent(keyword)}`,
+      method: 'GET',
+      headers: {
+        'User-Agent': 'KumamotoTrip/1.0 (kumamoto-trip.vercel.app)'
       }
-      
-      const req = https.get(urls[i], (res) => {
-        if (res.statusCode === 302 || res.statusCode === 301) {
-          tryUrl(0); // restart with redirect
-          return;
-        }
-        
-        let data = '';
-        res.on('data', chunk => data += chunk);
-        res.on('end', () => {
-          try {
-            const json = JSON.parse(data);
-            if (json.thumbnail) {
-              resolve({ image: json.thumbnail.source, url: json.content_urls?.desktop?.page || '' });
-            } else {
-              tryUrl(i + 1);
-            }
-          } catch (e) {
-            tryUrl(i + 1);
-          }
-        });
-      });
-      
-      req.on('error', () => tryUrl(i + 1));
     };
     
-    tryUrl(0);
+    const req = https.get(options, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        try {
+          const json = JSON.parse(data);
+          if (json.thumbnail) {
+            resolve({ image: json.thumbnail.source, url: json.content_urls?.desktop?.page || '' });
+          } else {
+            reject(new Error('No image'));
+          }
+        } catch (e) {
+          reject(e);
+        }
+      });
+    });
+    
+    req.on('error', reject);
+    req.setTimeout(5000, () => {
+      req.destroy();
+      reject(new Error('Timeout'));
+    });
   });
 }
 
